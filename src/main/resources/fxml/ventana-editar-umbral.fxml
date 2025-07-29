@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.shape.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1"
+      spacing="15" style="-fx-padding: 20px; -fx-font-family: 'Segoe UI'; -fx-font-smoothing-type: lcd;">
+
+    <!-- Sección superior: Datos actuales -->
+    <GridPane hgap="10" vgap="10">
+        <columnConstraints>
+            <ColumnConstraints halignment="RIGHT" minWidth="100"/>
+            <ColumnConstraints halignment="LEFT" minWidth="150"/>
+            <ColumnConstraints halignment="RIGHT" minWidth="100"/>
+            <ColumnConstraints halignment="LEFT" minWidth="150"/>
+        </columnConstraints>
+
+        <!-- Fila 1 -->
+        <Label text="Editar Umbral:" style="-fx-font-size: 14px;"
+               GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+        <TextField fx:id="editUmbralField" style="-fx-font-size: 14px;"
+                   GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+        <!-- Fila 2 -->
+        <Label text="Stock actual:" style="-fx-font-size: 14px;"
+               GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+        <TextField fx:id="stockActualField" style="-fx-font-size: 14px;"
+                   GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+        <Label text="Umbral actual:" style="-fx-font-size: 14px;"
+               GridPane.rowIndex="1" GridPane.columnIndex="2"/>
+        <TextField fx:id="umbralActualField" style="-fx-font-size: 14px;"
+                   GridPane.rowIndex="1" GridPane.columnIndex="3"/>
+    </GridPane>
+
+    <Line endX="650" strokeWidth="1" stroke="#DDD"/>
+
+    <!-- Sección de nuevo umbral -->
+    <GridPane hgap="10" vgap="10" style="-fx-padding: 10px 0;">
+        <columnConstraints>
+            <ColumnConstraints halignment="RIGHT" minWidth="100"/>
+            <ColumnConstraints halignment="LEFT" minWidth="200"/>
+        </columnConstraints>
+
+        <Label text="Nuevo Umbral:" style="-fx-font-size: 14px;"
+               GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+
+        <HBox spacing="10" GridPane.rowIndex="0" GridPane.columnIndex="1">
+            <ComboBox fx:id="nuevoUmbralCombo" style="-fx-font-size: 14px; -fx-pref-width: 120;"/>
+            <Text text="(Mínimo 1)" style="-fx-font-size: 13px; -fx-fill: #666;"/>
+        </HBox>
+
+        <Label text="Habilitar alertas:" style="-fx-font-size: 14px;"
+               GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+        <Button text="Agregar" onAction="#handleAgregarAlerta"
+                style="-fx-font-size: 14px; -fx-pref-width: 100;"
+                GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+    </GridPane>
+
+    <!-- Botones de acción -->
+    <HBox spacing="15" style="-fx-padding: 20px 0 0 0; -fx-alignment: CENTER;">
+        <Button text="Guardar cambios" onAction="#handleGuardar"
+                style="-fx-font-size: 14px; -fx-pref-width: 150; -fx-pref-height: 35;"/>
+        <Button text="Cancelar" onAction="#handleCancelar"
+                style="-fx-font-size: 14px; -fx-pref-width: 150; -fx-pref-height: 35;"/>
+    </HBox>
+
+</VBox>

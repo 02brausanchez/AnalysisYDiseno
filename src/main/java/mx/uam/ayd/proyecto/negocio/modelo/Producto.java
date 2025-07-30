@@ -3,7 +3,7 @@ package mx.uam.ayd.proyecto.negocio.modelo;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.time;
+//import java.time;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -23,52 +23,69 @@ import jakarta.persistence.OneToMany;
 public class Producto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long idProducto;
 
+    private long idProducto;
     private String nombre;
     private String tipoProducto;
     private String marca;
-    private float precio;
+    private Long precio;
     private int cantidadStock;
     private LocalDate fechaCaducidad;
 
     @OneToMany(targetEntity = Usuario.class, fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
 
-    private final List <Usuario> usuarios = new ArrayList <> ();
+    private final List<Usuario> usuarios = new ArrayList<>();
 
     /**
-     * @return the idProducto
+     * @return get
      */
-    public long getIdProducto() {
+    public Long getIdProducto() {
         return idProducto;
     }
-
-    /**
-     * @param idProducto the idProducto to set
-     */
-    public void setIdProducto(long idProducto) {
-        this.idProducto = idProducto;
-    }
-
-    /**
-     * @return the nombre
-     */
     public String getNombre() {
         return nombre;
     }
 
-    /**
-     * @param nombre the nombre to set
-     */
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
+    public String getTipoProducto() {
+        return tipoProducto;
+    }
+
+    public String getMarca() {
+        return marca;
+    }
+    public Long getPrecio() {
+        return precio;
+    }
+    public int getCantidadStock() {
+        return cantidadStock;
+    }
+    public LocalDate getFechaCaducidad() {
+        return fechaCaducidad;
     }
 
     /**
-     * @return the productos
+     //* @param  the nombre to set
      */
-    public List<Producto> getProductos() {
-        return productos;
+    public void setIdProducto(Long idProducto) {
+        this.idProducto = idProducto;
+    }
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+    public void setTipoProducto(String tipoProducto) {
+        this.tipoProducto = tipoProducto;
+    }
+    public void setMarca(String marca) {
+        this.marca = marca;
+    }
+    public void setPrecio(Long precio) {
+        this.precio = precio;
+    }
+    public void setCantidadStock(int cantidadStock) {
+        this.cantidadStock = cantidadStock;
+    }
+    public void setFechaCaducidad(LocalDate fechaCaducidad) {
+        this.fechaCaducidad = fechaCaducidad;
     }
 
     /**
@@ -76,10 +93,10 @@ public class Producto {
      * Permite agregar un usuario al grupo
      * Nota: un mismo usuario no puede estar dos veces en el grupo
      *
-     * @param usuario el usuario que deseo agregar al grupo
+     //* @param usuario el usuario que deseo agregar al grupo
      * @return true si el usuario se agregó correctamente, false si ya estaba en el grupo
      * @throws IllegalArgumentException si el usuario es nulo
-     */
+     **/
     public boolean addUmbral(Umbral umbral) {
 
 
@@ -97,21 +114,6 @@ public class Producto {
 
     }
 
-    /**
-     *
-     * Permite quitar un usuario al grupo
-     *
-     * @param usuario el usuario que deseo agregar al grupo
-     * @return true si el usuario se quitó correctamente, false si no estaba en el grupo
-     * @throws IllegalArgumentException si el usuario es nulo
-     */
-    public boolean removeUsuario(Usuario usuario) {
-        if(usuario == null) {
-            throw new IllegalArgumentException("El usuario no puede ser null");
-        }
-
-        return usuarios.remove(usuario);
-    }
 
     @Override
     public boolean equals(Object obj) {

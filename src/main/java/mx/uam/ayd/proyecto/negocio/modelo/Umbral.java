@@ -1,17 +1,11 @@
 package mx.uam.ayd.proyecto.negocio.modelo;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.time;
-
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.JoinColumn;
 
 /**
  * Entidad de negocio Grupo
@@ -21,58 +15,58 @@ import jakarta.persistence.OneToMany;
  */
 @Entity
 public class Umbral{
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long idUmbral;
+    private Long idUmbral;
 
-    private int stockMinimo;
-    private boolean alertaAbilitada;
-    private String mensaje;
+    private int valorMinimo;
 
-    private final List <Umbral> umbrales = new ArrayList <> ();
+    @OneToOne
+    @JoinColumn(name = "producto_id")
+    private Producto producto;
 
-    /**
-     * @return the idProducto
-     */
+    @OneToOne
+    @JoinColumn(name = "alerta_id")
+    private Alerta alerta;
+    // Getters y setters
     public long getIdUmbral() {
         return idUmbral;
     }
 
-    /**
-     * @param idProducto the idProducto to set
-     */
     public void setIdUmbral(long idUmbral) {
         this.idUmbral = idUmbral;
     }
 
-    /**
-     * @return the nombre
-     */
-    public String getStockMinimo() {
-        return stockMinimo;
+    public int getValorMinimo() {
+        return valorMinimo;
     }
 
-    /**
-     * @param nombre the nombre to set
-     */
-    public void setStockMinimo(int stockMinimo) {
-        this.stockMinimo = stockMinimo;
+    public void setValorMinimo(int valorMinimo) {
+        this.valorMinimo = valorMinimo;
     }
 
-    /**
-     * @return the productos
-     */
-    public List<Umbral> getUmbrales() {
-        return umbrales;
+    public Producto getProducto() {
+        return producto;
+    }
+
+    public void setProducto(Producto producto) {
+        this.producto = producto;
+    }
+
+    public Alerta getAlerta() {
+        return alerta;
+    }
+
+    public void setAlerta(Alerta alerta) {
+        this.alerta = alerta;
     }
 
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
             return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
+        if (obj == null || getClass() != obj.getClass())
             return false;
         Umbral other = (Umbral) obj;
         return idUmbral == other.idUmbral;
@@ -85,6 +79,9 @@ public class Umbral{
 
     @Override
     public String toString() {
-        return "Umbral [idUmbral" + idUmbral + ", stockMinimo=" + stockMinimo + ", aleraAbilitada=" + alertaAbilitada + ", mensaje=" + mensaje "]";
+        return "Umbral [idUmbral=" + idUmbral + ", valorMinimo=" + valorMinimo +
+                ", producto=" + (producto != null ? producto.getNombre() : "null") +
+                ", alerta=" + (alerta != null ? alerta.getIdAlerta() : "null") + "]";
     }
+
 }

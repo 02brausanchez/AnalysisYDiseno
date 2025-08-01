@@ -8,9 +8,9 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.JoinColumn;
 
 /**
- * Entidad de negocio Grupo
+ * Entidad de negocio Umbral
  *
- * @author humbertocervantes
+ * @author braulio sanchez
  *
  */
 @Entity

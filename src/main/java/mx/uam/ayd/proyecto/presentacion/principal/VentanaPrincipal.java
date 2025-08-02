@@ -64,7 +64,7 @@ public class VentanaPrincipal {
 	/**
 	 * Muestra la ventana y establece el control
 	 * 
-	 * @param control El controlador asociado a esta ventana
+//	 * @param control El controlador asociado a esta ventana
 	 */
 	public void muestra() {
 		//this.control = control;

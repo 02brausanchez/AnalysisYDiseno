@@ -11,7 +11,8 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
 
 /**
  * Entidad de negocio Grupo
@@ -24,7 +25,7 @@ public class Producto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 
-    private long idProducto;
+    private Long idProducto;
     private String nombre;
     private String tipoProducto;
     private String marca;
@@ -32,9 +33,9 @@ public class Producto {
     private int cantidadStock;
     private LocalDate fechaCaducidad;
 
-    @OneToMany(targetEntity = Usuario.class, fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
-
-    private final List<Usuario> usuarios = new ArrayList<>();
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "umbral_id")
+    private Umbral umbral;
 
     /**
      * @return get
@@ -98,20 +99,16 @@ public class Producto {
      * @throws IllegalArgumentException si el usuario es nulo
      **/
     public boolean addUmbral(Umbral umbral) {
-
-
-        if(umbral == null) {
+        if (umbral == null) {
             throw new IllegalArgumentException("El umbral no puede ser null");
         }
 
-
-        if(umbral.contains(umbral)) {
-            // Checo si el umbral está en el producto por que no se puede agregar un umbral dos veces
-            return false;
+        if (this.umbral != null) {
+            return false; // Ya hay un umbral asignado, no se puede agregar otro
         }
 
-        return umbral.add(umbral);
-
+        this.umbral = umbral;
+        return true;
     }
 
 
@@ -119,9 +116,7 @@ public class Producto {
     public boolean equals(Object obj) {
         if (this == obj)
             return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
+        if (obj == null || getClass() != obj.getClass())
             return false;
         Producto other = (Producto) obj;
         return idProducto == other.idProducto;
@@ -134,6 +129,6 @@ public class Producto {
 
     @Override
     public String toString() {
-        return "Prodcuto [idprodcuto=" + idGrupo + ", nombre=" + nombre + ", marca=" + marca + "]";
+        return "Prodcuto [idProducto=" + idProducto + ", nombre=" + nombre + ", marca=" + marca + ", precio=" + precio + "]";
     }
 }

@@ -3,7 +3,6 @@ package mx.uam.ayd.proyecto.negocio.modelo;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.time;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -11,7 +10,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.ManyToOne;
 
 /**
  * Entidad de negocio Grupo
@@ -28,30 +27,22 @@ public class DetalleVenta {
     private int cantidadVendida;
     private float subtotal;
 
-    /**
-     * @return the idProducto
-     */
+    @ManyToOne
+    @JoinColumn(name = "venta_id")
+    private Venta venta;
+
     public long getIdDetalleVenta() {
         return idDetalleVenta;
     }
 
-    /**
-     * @param idProducto the idProducto to set
-     */
     public void setIdDetalleVenta(long idDetalleVenta) {
         this.idDetalleVenta = idDetalleVenta;
     }
 
-    /**
-     * @return the nombre
-     */
-    public String getCantidadVendida() {
+    public int getCantidadVendida() {
         return cantidadVendida;
     }
 
-    /**
-     * @param nombre the nombre to set
-     */
     public void setCantidadVendida(int cantidadVendida) {
         this.cantidadVendida = cantidadVendida;
     }
@@ -60,25 +51,30 @@ public class DetalleVenta {
 
     public void setSubtotal(float subtotal) {this.subtotal = subtotal;}
 
+    public void setVenta(Venta venta){
+        if(venta == null){
+            throw new IllegalArgumentException("La venta no puede ser null");
+        }
+        this.venta = venta;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
             return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
+        if (obj == null || getClass() != obj.getClass())
             return false;
         DetalleVenta other = (DetalleVenta) obj;
-        return idDetalleVenta == other.idDetalleVenta;
+        return java.util.Objects.equals(idDetalleVenta, other.idDetalleVenta);
     }
 
     @Override
     public int hashCode() {
-        return (int) (31 * idProducto);
+        return (int) (31 * idDetalleVenta);
     }
 
     @Override
     public String toString() {
-        return "DetalleVenta [idDetalleVenta=" + idDetalleVenta + ", cantidadVendida=" + cantidadVendida + ", subtotal=" + subtotal + "]";
+        return "DetalleVenta [idDetalleVenta=" + idDetalleVenta + ", cantidadVendida=" + cantidadVendida + ", subtotal=" + subtotal + "idVenta=" + (venta != null ? venta.getIdVenta() : "null") + "]";
     }
 }

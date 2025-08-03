@@ -30,8 +30,6 @@ public class Venta {
     @OneToMany(mappedBy = "venta", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private final List<DetalleVenta> detalleVentas = new ArrayList<>();
 
-
-
     public Long getIdVenta() {
         return idVenta;
     }

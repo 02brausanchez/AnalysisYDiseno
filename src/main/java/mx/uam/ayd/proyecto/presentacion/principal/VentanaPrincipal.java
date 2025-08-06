@@ -1,12 +1,11 @@
 package mx.uam.ayd.proyecto.presentacion.principal;
 
+import org.springframework.stereotype.Component;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-
-import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
@@ -79,7 +78,13 @@ public class VentanaPrincipal {
 	}
 	
 	// FXML Event Handlers
-	
+	@FXML
+	private void handleConfigurarUmbrales() {
+		if(control!= null){
+			control.configurarUmbrales();
+		}
+	}
+
 	@FXML
 	private void handleAgregarUsuario() {
 		if (control != null) {

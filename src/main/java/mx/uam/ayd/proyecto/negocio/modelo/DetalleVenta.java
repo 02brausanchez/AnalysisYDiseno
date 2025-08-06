@@ -18,12 +18,31 @@ public class DetalleVenta {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long idDetalleVenta;
 
+
     private int cantidadVendida;
     private float subtotal;
+
+    /* Se agrego esta parte */
+    @ManyToOne
+    @JoinColumn(name = "producto_id")
+    private Producto producto;
+
 
     @ManyToOne
     @JoinColumn(name = "venta_id")
     private Venta venta;
+
+    /*Tambien se agrego estos get y set */
+    public Producto getProducto() {
+        return producto;
+    }
+
+    public void setProducto(Producto producto) {
+        if (producto == null) {
+            throw new IllegalArgumentException("El producto no puede ser null");
+        }
+        this.producto = producto;
+    }
 
     public long getIdDetalleVenta() {
         return idDetalleVenta;

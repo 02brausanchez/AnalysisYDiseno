@@ -4,18 +4,21 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
 
-<VBox xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" 
+<VBox xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1"
       spacing="10" style="-fx-padding: 15px;">
-    
+
     <Label text="Mi Aplicación" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
-    
-    <Button text="Agregar usuario" onAction="#handleAgregarUsuario" 
+
+    <Button text="Agregar usuario" onAction="#handleAgregarUsuario"
             style="-fx-min-width: 200px; -fx-min-height: 30px;"/>
-    
-    <Button text="Listar usuarios" onAction="#handleListarUsuarios" 
+
+    <Button text="Listar usuarios" onAction="#handleListarUsuarios"
             style="-fx-min-width: 200px; -fx-min-height: 30px;"/>
-    
-    <Button text="Listar grupos" onAction="#handleListarGrupos" 
+
+    <Button text="Listar grupos" onAction="#handleListarGrupos"
             style="-fx-min-width: 200px; -fx-min-height: 30px;"/>
-    
-</VBox> 
+
+    <Button text="Configurar Umbrales" onAction="#handleConfigurarUmbrales"
+            style="-fx-min-width: 200px; -fx-min-height: 30px;"/>
+
+</VBox>

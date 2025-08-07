@@ -1,21 +1,30 @@
 package mx.uam.ayd.proyecto.presentacion.configurarUmbrales;
 
-import jakarta.annotation.PostConstruct;
 import javafx.application.Platform;
-import javafx.beans.property.SimpleIntegerProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
-import mx.uam.ayd.proyecto.negocio.modelo.Producto;
-import mx.uam.ayd.proyecto.negocio.modelo.Umbral;
-import org.springframework.stereotype.Component;
-import mx.uam.ayd.proyecto.negocio.ServicioUmbrales;
 
+import mx.uam.ayd.proyecto.negocio.modelo.*;
+import org.springframework.stereotype.Component;
+
+import java.awt.*;
 import java.io.IOException;
+
+import mx.uam.ayd.proyecto.negocio.modelo.Umbral;
+import mx.uam.ayd.proyecto.negocio.ServicioUmbrales;
+import mx.uam.ayd.proyecto.negocio.modelo.Umbral;
+
+import java.io.InputStream;
 import java.util.List;
 
 @Component
@@ -24,19 +33,29 @@ public class VentanaConfiguracionUmbrales {
     private ControlConfiguracionUmbrales control;
     private Producto productoSeleccionado;
 
-
     // Campos para la tabla de productos
     @FXML
     private TableView<Producto> tablaProductos;
 
     @FXML
-    private TableColumn<Producto, String> columnaNombre;
+    private TableColumn<Producto, String> columnaProducto;
+
     @FXML
     private TableColumn<Producto, Integer> columnaStock;
+
     @FXML
     private TableColumn<Producto, Integer> columnaUmbral;
 
+    @FXML
+    private TableColumn<Producto, String> columnaEstado; // Nueva columna
+
+    @FXML
+    private TableColumn<Producto, Button> columnaAccion; // Columna con botón
+
     // Campos para el panel de edición (del FXML compartido)
+    @FXML
+    private Label labelTitulo;
+
     @FXML
     private TextField editUmbralField;
     @FXML
@@ -70,14 +89,24 @@ public class VentanaConfiguracionUmbrales {
         }
 
         try {
-            stage = new Stage();
-            stage.setTitle("Agregar Usuario");
-
             // Load FXML
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ventana-menu-principal-umbral.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ventana-menu-principal-umbrales.fxml"));
             loader.setController(this);
-            Scene scene = new Scene(loader.load(), 300, 220);
+            Scene scene = new Scene(loader.load(), 450, 400);
+            stage = new Stage();
+            stage.setTitle("Gestion de stock");
             stage.setScene(scene);
+
+
+            VentanaConfiguracionUmbrales control = loader.getController();
+
+            //Configure columns after FXML is loaded
+            columnaProducto.setCellValueFactory(new PropertyValueFactory<>("nombre"));
+            columnaStock.setCellValueFactory(new PropertyValueFactory<>("cantidadStock"));
+            columnaUmbral.setCellValueFactory(new PropertyValueFactory<>("Umbral"));
+            columnaEstado.setCellValueFactory(new PropertyValueFactory<>("Estado"));
+            columnaAccion.setCellValueFactory(new PropertyValueFactory<>("Accion"));
+
 
             initialized = true;
         } catch (IOException e) {
@@ -99,6 +128,17 @@ public class VentanaConfiguracionUmbrales {
        @param umbral la lista de productos disponibles
      */
     public void muestra(List<Producto> productos) {
+        if (!Platform.isFxApplicationThread()) {
+            Platform.runLater(() -> this.muestra(productos));
+            return;
+        }
+        initializeUI();
+
+        ObservableList<Producto> data = FXCollections.observableArrayList(productos);
+        tablaProductos.setItems(data);
+
+        stage.show();
+        /*
         Platform.runLater(() -> {
             // Configurar tabla
             columnaNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
@@ -117,7 +157,7 @@ public class VentanaConfiguracionUmbrales {
                 tablaProductos.getSelectionModel().selectFirst();
                 actualizarPanelEdicion(productos.get(0));
             }
-        });
+        });*/
     }
 
     /*
@@ -176,6 +216,7 @@ public class VentanaConfiguracionUmbrales {
         }
     }
 
+
     private void actualizarPanelEdicion(Producto producto) {
         this.productoSeleccionado = producto;
         stockActualField.setText(String.valueOf(producto.getCantidadStock()));
@@ -190,6 +231,7 @@ public class VentanaConfiguracionUmbrales {
             nuevoUmbralCombo.setValue(1);
         }
     }
+
     // FXML Event Handlers
 
     @FXML
@@ -219,7 +261,6 @@ public class VentanaConfiguracionUmbrales {
             muestraDialogoConMensaje("Error al actualizar: " + e.getMessage());
         }
     }
-
 
     @FXML
     private void handleCancelar() {

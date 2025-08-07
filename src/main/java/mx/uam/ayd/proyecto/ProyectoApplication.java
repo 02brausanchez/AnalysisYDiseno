@@ -1,5 +1,10 @@
 package mx.uam.ayd.proyecto;
 
+import mx.uam.ayd.proyecto.datos.UmbralRepository;
+import mx.uam.ayd.proyecto.datos.ProductoRepository;
+
+import mx.uam.ayd.proyecto.negocio.modelo.Producto;
+import mx.uam.ayd.proyecto.negocio.modelo.Umbral;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
@@ -27,11 +32,17 @@ public class ProyectoApplication {
 
 	private final ControlPrincipal controlPrincipal;
 	private final GrupoRepository grupoRepository;
+	//Se añaden productos y umbrales para hacer una prueba manualmente
+	private final ProductoRepository productoRepository;
+	private final UmbralRepository umbralRepository;
+
 	
 	@Autowired
-	public ProyectoApplication(ControlPrincipal controlPrincipal, GrupoRepository grupoRepository) {
+	public ProyectoApplication(ControlPrincipal controlPrincipal, GrupoRepository grupoRepository, ProductoRepository productoRepository, UmbralRepository umbralRepository) {
 		this.controlPrincipal = controlPrincipal;
 		this.grupoRepository = grupoRepository;
+		this.productoRepository = productoRepository;
+		this.umbralRepository = umbralRepository;
 	}
 
 	/**
@@ -92,12 +103,29 @@ public class ProyectoApplication {
 	 */
 	public void inicializaBD() {
 		// Vamos a crear los dos grupos de usuarios
+		/*
 		Grupo grupoAdmin = new Grupo();
 		grupoAdmin.setNombre("Administradores");
 		grupoRepository.save(grupoAdmin);
 		
 		Grupo grupoOps = new Grupo();
 		grupoOps.setNombre("Operadores");
-		grupoRepository.save(grupoOps);
+		grupoRepository.save(grupoOps);*/
+
+		// Se agrega una prueba manualmente:
+		Grupo grupoAdmin = new Grupo();
+		grupoAdmin.setNombre("Administradores");
+		grupoRepository.save(grupoAdmin);
+
+		// Nuevos datos de prueba
+		Producto p1 = new Producto();
+		p1.setNombre("Producto 1");
+		p1.setCantidadStock(10);
+		productoRepository.save(p1);
+
+		Umbral u1 = new Umbral();
+		u1.setValorMinimo(5);
+		u1.setProducto(p1);
+		umbralRepository.save(u1);
 	}
 }

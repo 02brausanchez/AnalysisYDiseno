@@ -2,10 +2,13 @@ package mx.uam.ayd.proyecto.presentacion.configurarUmbrales;
 
 import mx.uam.ayd.proyecto.presentacion.configurarUmbrales.ControlConfiguracionUmbrales;
 import mx.uam.ayd.proyecto.presentacion.alertas.ControlConfiguracionAlerta;
+import mx.uam.ayd.proyecto.presentacion.configurarUmbrales.VentanaConfiguracionUmbrales;
 
 import javafx.stage.Stage;
 import mx.uam.ayd.proyecto.negocio.ServicioAlerta;
 import mx.uam.ayd.proyecto.negocio.modelo.Umbral;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import mx.uam.ayd.proyecto.negocio.ServicioUmbrales;
@@ -18,6 +21,7 @@ import java.util.List;
 
 @Component
 public class ControlConfiguracionUmbrales {
+    //private static final Logger log = LoggerFactory.getLogger(ControlConfiguracionUmbrales.class);
 
     private final ServicioUmbrales servicioUmbrales;
     //private final ServicioAlerta servicioAlerta;
@@ -27,6 +31,8 @@ public class ControlConfiguracionUmbrales {
     //private final ControlConfiguracionUmbrales controlConfiguracionUmbrales;
 
     //private final ControlConfiguracionAlerta controlAlerta;
+
+
     private Stage stage;
 
 

@@ -1,18 +1,26 @@
 package mx.uam.ayd.proyecto.presentacion.configurarUmbrales;
 
-import mx.uam.ayd.proyecto.presentacion.configurarUmbrales.ControlConfiguracionUmbrales;
-import mx.uam.ayd.proyecto.presentacion.alertas.ControlConfiguracionAlerta;
-import mx.uam.ayd.proyecto.presentacion.configurarUmbrales.VentanaConfiguracionUmbrales;
+import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
+import javafx.scene.control.TextField;
+
+//import mx.uam.ayd.proyecto.presentacion.configurarUmbrales.ControlConfiguracionUmbrales;
+//import mx.uam.ayd.proyecto.presentacion.alertas.ControlConfiguracionAlerta;
+//import mx.uam.ayd.proyecto.presentacion.configurarUmbrales.VentanaConfiguracionUmbrales;
+
+import mx.uam.ayd.proyecto.negocio.ServicioUmbrales;
+import mx.uam.ayd.proyecto.negocio.modelo.Umbral;
+import mx.uam.ayd.proyecto.negocio.modelo.Producto;
 
 import javafx.stage.Stage;
-import mx.uam.ayd.proyecto.negocio.ServicioAlerta;
-import mx.uam.ayd.proyecto.negocio.modelo.Umbral;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+//import mx.uam.ayd.proyecto.negocio.ServicioAlerta;
+//import mx.uam.ayd.proyecto.negocio.modelo.Umbral;
+//import org.slf4j.Logger;
+//import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import mx.uam.ayd.proyecto.negocio.ServicioUmbrales;
-import mx.uam.ayd.proyecto.negocio.modelo.Producto;
+
+//import mx.uam.ayd.proyecto.negocio.modelo.Producto;
 
 //import mx.uam.ayd.proyecto.presentacion.alertas.ControlConfiguracionAlerta;
 
@@ -22,10 +30,18 @@ import java.util.List;
 @Component
 public class ControlConfiguracionUmbrales {
     //private static final Logger log = LoggerFactory.getLogger(ControlConfiguracionUmbrales.class);
+    @FXML private TextField txtProducto;
+    @FXML private TextField txtStockActual;
+    @FXML private TextField txtUmbralActual;
+    @FXML private TextField txtNuevoUmbral;
 
-    private final ServicioUmbrales servicioUmbrales;
+    private Producto producto;
+    //private ServicioUmbrales servicio;
+    private Runnable callbackActualizacion;
+
+    private ServicioUmbrales servicioUmbrales;
     //private final ServicioAlerta servicioAlerta;
-    private final VentanaConfiguracionUmbrales ventana;
+    private VentanaConfiguracionUmbrales ventana;
     //private final ControlConfiguracionAlerta controlAlerta;
 
     //private final ControlConfiguracionUmbrales controlConfiguracionUmbrales;
@@ -36,16 +52,26 @@ public class ControlConfiguracionUmbrales {
     private Stage stage;
 
 
-    @Autowired
+
     public ControlConfiguracionUmbrales(
-            ServicioUmbrales servicioUmbrales,
+            //ServicioUmbrales servicioUmbrales,
             //ServicioAlerta servicioAlerta,
-            VentanaConfiguracionUmbrales ventana
-            /*ControlConfiguracionAlerta controlAlerta*/) {
-        this.servicioUmbrales = servicioUmbrales;
+            //VentanaConfiguracionUmbrales ventana
+            /*ControlConfiguracionAlerta controlAlerta*/VentanaConfiguracionUmbrales ventana) {
+        //this.servicioUmbrales = servicioUmbrales;
         //this.controlAlerta = controlAlerta;
-        this.ventana = ventana;
+        //this.ventana = ventana;
         //this.servicioAlerta = servicioAlerta;
+    }
+
+    @Autowired
+    public void setVentanaConfiguracionUmbrales(VentanaConfiguracionUmbrales ventana) {
+        this.ventana = ventana;
+    }
+
+    @Autowired
+    public void setServicioUmbrales(ServicioUmbrales servicioUmbrales) {
+        this.servicioUmbrales = servicioUmbrales;
     }
 
     /**
@@ -61,12 +87,76 @@ public class ControlConfiguracionUmbrales {
      * Inicia la historia de usuario
      */
     public void inicia() {
-        List<Producto> productos = servicioUmbrales.recuperaConStockNoCero(); // Usa método de Fase 1
+        List<Producto> productos = servicioUmbrales.recuperaConStockNoCero();
+        //lógica para mostrar productos
         if (productos.isEmpty()) {
             ventana.muestraDialogoConMensaje("No hay productos con stock disponible para configurar, por favor agregue manualmente productos");
         } else {
             ventana.muestra(productos); // Muestra lista filtrada
         }
+    }
+
+
+    public void setProducto(Producto producto) {
+        this.producto = producto;
+        cargarDatosProductos();
+    }
+
+    public void setCallbackActualizacion(Runnable callback) {
+        this.callbackActualizacion = callbackActualizacion;
+    }
+
+    private void cargarDatosProductos(){
+        txtProducto.setText(producto.getNombre());
+        txtStockActual.setText(String.valueOf(producto.getCantidadStock()));
+
+        Umbral umbral = servicioUmbrales.findByProducto(producto.getIdProducto());
+        if (umbral != null) {
+            txtUmbralActual.setText(String.valueOf(umbral.getValorMinimo()));
+            txtNuevoUmbral.setText(String.valueOf(umbral.getValorMinimo()));
+        } else {
+            txtUmbralActual.setText("No configurado");
+            txtNuevoUmbral.setText("1");
+        }
+    }
+
+    @FXML
+    private void guardarCambios() {
+        try {
+            int nuevoUmbral = Integer.parseInt(txtNuevoUmbral.getText());
+
+            if (nuevoUmbral <= 1) {
+                mostrarAlerta("Error", "El umbral debe ser mayor a 1");
+                return;
+            }
+
+            Umbral umbral = servicioUmbrales.findByProducto(producto.getIdProducto());
+            if (umbral == null) {
+                servicioUmbrales.crearUmbral(producto.getIdProducto(), nuevoUmbral);
+            } else {
+                servicioUmbrales.actualizarUmbral(producto.getIdProducto(), nuevoUmbral);
+            }
+
+            mostrarAlerta("Éxito", "Umbral actualizado correctamente");
+            if (callbackActualizacion != null) {
+                callbackActualizacion.run();
+            }
+
+            // Cerrar ventana
+            txtNuevoUmbral.getScene().getWindow().hide();
+        } catch (NumberFormatException e) {
+            mostrarAlerta("Error", "Ingrese un valor numérico válido");
+        } catch (Exception e) {
+            mostrarAlerta("Error", "Ocurrió un error: " + e.getMessage());
+        }
+    }
+
+    private void mostrarAlerta(String titulo, String mensaje) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(titulo);
+        alert.setHeaderText(null);
+        alert.setContentText(mensaje);
+        alert.showAndWait();
     }
 
     /**
@@ -101,42 +191,7 @@ public class ControlConfiguracionUmbrales {
             e.printStackTrace();
         }
     }
-    /*
-    public void mostrarVentanaAlerta(Producto producto) {
-        if (producto.getUmbral() == null) {
-            ventana.muestraDialogoConMensaje("Configure primero un umbral");
-            return;
-        }
 
-        // Verificar si ya existe alerta
-        Alerta alertaExistente = servicioAlerta.buscarPorProducto(producto.getIdProducto());
-
-        if (alertaExistente != null) {
-            controlAlerta.editarAlertaExistente(alertaExistente);
-        } else {
-            controlAlerta.crearNuevaAlerta(producto);
-        }
-    }*/
-
-
-
-    /*
-    **
-     * Muestra la ventana de configuración de alertas
-     * @param producto Producto seleccionado para configurar alertas
-     *
-    public void mostrarVentanaAlerta(Producto producto) {
-        try {
-            if (producto.getUmbral() == null) {
-                ventana.muestraDialogoConMensaje("Primero configure un umbral para este producto");
-                return;
-            }
-            controlAlerta.inicia(producto);
-        } catch (Exception e) {
-            ventana.muestraDialogoConMensaje("Error al abrir configuración de alertas: " + e.getMessage());
-        }
-    }
-    */
 
     /**
      * Cierra la ventana de configuración

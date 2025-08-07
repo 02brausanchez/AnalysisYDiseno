@@ -118,14 +118,37 @@ public class ProyectoApplication {
 		grupoRepository.save(grupoAdmin);
 
 		// Nuevos datos de prueba
+
+		// Probando con un producto
 		Producto p1 = new Producto();
-		p1.setNombre("Producto 1");
-		p1.setCantidadStock(10);
-		productoRepository.save(p1);
+		p1.setNombre("P1");
+		p1.setCantidadStock(4);
 
 		Umbral u1 = new Umbral();
-		u1.setValorMinimo(5);
+		u1.setValorMinimo(25);
+
+		//Establecer relacion bidireccional
+		p1.setUmbral(u1);
 		u1.setProducto(p1);
-		umbralRepository.save(u1);
+
+		//Solo se guarda el producto
+		productoRepository.save(p1);
+
+
+		// Probando con varios productos
+		for (int i = 1; i <= 10; i++) {
+			Producto p = new Producto();
+			p.setNombre("Producto " + i);
+			p.setCantidadStock(i * 3);
+
+			Umbral u = new Umbral();
+			u.setValorMinimo(i + 2);
+
+			p.setUmbral(u);
+			u.setProducto(p);
+
+			productoRepository.save(p); // guarda producto y umbral
+		}
+
 	}
 }

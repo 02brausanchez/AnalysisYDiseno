@@ -1,23 +1,32 @@
 package mx.uam.ayd.proyecto.presentacion.configurarUmbrales;
+import mx.uam.ayd.proyecto.presentacion.configurarUmbrales.ControlConfiguracionUmbrales;
 
+import javafx.scene.control.TableCell;
+import javafx.scene.control.TableColumn;
 import javafx.application.Platform;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import mx.uam.ayd.proyecto.negocio.modelo.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.awt.*;
+import java.awt.Button;
+import java.awt.Label;
+//import java.awt.TextField;
+import javafx.scene.control.TextField;
 import java.io.IOException;
 
 import mx.uam.ayd.proyecto.negocio.modelo.Umbral;
@@ -32,6 +41,24 @@ public class VentanaConfiguracionUmbrales {
     private Stage stage;
     private ControlConfiguracionUmbrales control;
     private Producto productoSeleccionado;
+    private ServicioUmbrales servicioUmbrales;
+    private VentanaConfiguracionUmbrales ventana;
+
+    public void ventanaConfiguracionUmbrales(VentanaConfiguracionUmbrales ventana){
+        this.ventana=ventana;
+    }
+
+    @Autowired
+    public VentanaConfiguracionUmbrales(ServicioUmbrales servicioUmbrales) {
+        this.servicioUmbrales = servicioUmbrales;
+    }
+
+    public TableColumn<Producto, String> getColumnaEstado() {
+        return columnaEstado;
+    }
+
+    @FXML
+    private TableColumn<Producto, String> columnaEstado;
 
     // Campos para la tabla de productos
     @FXML
@@ -47,14 +74,11 @@ public class VentanaConfiguracionUmbrales {
     private TableColumn<Producto, Integer> columnaUmbral;
 
     @FXML
-    private TableColumn<Producto, String> columnaEstado; // Nueva columna
-
-    @FXML
-    private TableColumn<Producto, Button> columnaAccion; // Columna con botón
+    private TableColumn<Producto, Void> columnaAccion; // Columna con botón
 
     // Campos para el panel de edición (del FXML compartido)
-    @FXML
-    private Label labelTitulo;
+    //@FXML
+    //private Label labelTitulo;
 
     @FXML
     private TextField editUmbralField;
@@ -97,22 +121,128 @@ public class VentanaConfiguracionUmbrales {
             stage.setTitle("Gestion de stock");
             stage.setScene(scene);
 
-
-            VentanaConfiguracionUmbrales control = loader.getController();
-
-            //Configure columns after FXML is loaded
-            columnaProducto.setCellValueFactory(new PropertyValueFactory<>("nombre"));
-            columnaStock.setCellValueFactory(new PropertyValueFactory<>("cantidadStock"));
-            columnaUmbral.setCellValueFactory(new PropertyValueFactory<>("Umbral"));
-            columnaEstado.setCellValueFactory(new PropertyValueFactory<>("Estado"));
-            columnaAccion.setCellValueFactory(new PropertyValueFactory<>("Accion"));
-
-
             initialized = true;
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
+    @FXML
+    public void initialize(){
+        //Configuracion de columnas
+        configurarColumnas();
+    }
+
+    private void configurarColumnas() {
+        // Columna Producto
+        columnaProducto.setCellValueFactory(new PropertyValueFactory<>("nombre"));
+
+        // Columna Stock
+        columnaStock.setCellValueFactory(new PropertyValueFactory<>("cantidadStock"));
+
+        // Columna Umbral (con valor dinámico)
+        columnaUmbral.setCellValueFactory(cellData -> {
+            Producto producto = cellData.getValue();
+            Umbral umbral = servicioUmbrales.findByProducto(producto.getIdProducto());
+            return new SimpleIntegerProperty(umbral != null ? umbral.getValorMinimo() : 1).asObject();
+        });
+
+        // Columna Estado (con estilo condicional)
+        columnaEstado.setCellValueFactory(cellData -> {
+            Producto producto = cellData.getValue();
+            Umbral umbral = servicioUmbrales.findByProducto(producto.getIdProducto());
+
+            if (umbral == null) {
+                return new SimpleStringProperty("No configurado");
+            } else if (producto.getCantidadStock() < umbral.getValorMinimo()) {
+                return new SimpleStringProperty("BAJO STOCK");
+            } else {
+                return new SimpleStringProperty("OK");
+            }
+        });
+
+        columnaEstado.setCellFactory(column -> new TableCell<Producto, String>() {
+            @Override
+            protected void updateItem(String estado, boolean empty) {
+                super.updateItem(estado, empty);
+
+                if (empty || estado == null) {
+                    setText(null);
+                    setStyle("");
+                } else {
+                    setText(estado);
+                    if (estado.equals("BAJO STOCK")) {
+                        setStyle("-fx-text-fill: red; -fx-font-weight: bold;");
+                    } else {
+                        setStyle("-fx-text-fill: green;");
+                    }
+                }
+            }
+        });
+
+        // Columna Acción - Versión corregida
+        columnaAccion.setCellFactory(param -> new TableCell<Producto, Void>() {
+            private final javafx.scene.control.Button btnEditar = new javafx.scene.control.Button("Editar");
+
+            {
+                btnEditar.setOnAction(event -> {
+                    Producto producto = getTableView().getItems().get(getIndex());
+                    abrirVentanaEdicionUmbral(producto);
+                });
+
+                btnEditar.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white;");
+            }
+
+            @Override
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty) {
+                    setGraphic(null);
+                } else {
+                    setGraphic(btnEditar);
+                }
+            }
+        });
+    }
+
+    /*
+        Metodo para abrir la ventana de edicion
+     */
+    private void abrirVentanaEdicionUmbral(Producto producto) {
+        try {
+            // 1. Crear el controlador manualmente con su dependencia
+            ControlConfiguracionUmbrales controlador = new ControlConfiguracionUmbrales(ventana);
+
+            // 2. Cargar el FXML y asignar el controlador antes de llamar a load()
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ventana-editar-umbral.fxml"));
+            loader.setController(controlador);
+            Parent root = loader.load();
+
+            // 3. Inyectar las demás dependencias y datos
+            controlador.setProducto(producto);
+            controlador.setServicioUmbrales(servicioUmbrales);
+            controlador.setCallbackActualizacion(() -> tablaProductos.refresh());
+
+            // 4. Mostrar la nueva ventana
+            Stage stage = new Stage();
+            stage.setTitle("Editar Umbral - " + producto.getNombre());
+            stage.setScene(new Scene(root));
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.showAndWait();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            muestraDialogoConMensaje("Error al abrir ventana de edición:\n" + e.getMessage());
+
+            System.err.println("Ruta intentada: " + getClass().getResource("/fxml/ventana-editar-umbral.fxml"));
+            if (e.getCause() != null) {
+                System.err.println("Causa: " + e.getCause().getMessage());
+            }
+        }
+    }
+
+
+
 
     /*
      * Establece el controlador asociado a esta ventana
@@ -233,6 +363,14 @@ public class VentanaConfiguracionUmbrales {
     }
 
     // FXML Event Handlers
+
+    /*
+    @FXML
+    private void handleAgregarAlerta() {
+        // Aquí puedes implementar la lógica luego
+        System.out.println("Botón 'Agregar' presionado");
+    }*/
+
 
     @FXML
     private void handleEditarUmbral() {

@@ -21,18 +21,18 @@
         <!-- Fila 1 -->
         <Label text="Editar Umbral:" style="-fx-font-size: 14px;"
                GridPane.rowIndex="0" GridPane.columnIndex="0"/>
-        <TextField fx:id="editUmbralField" style="-fx-font-size: 14px;"
+        <TextField fx:id="editUmbral" style="-fx-font-size: 14px;"
                    GridPane.rowIndex="0" GridPane.columnIndex="1"/>
 
         <!-- Fila 2 -->
         <Label text="Stock actual:" style="-fx-font-size: 14px;"
                GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-        <TextField fx:id="stockActualField" style="-fx-font-size: 14px;"
+        <TextField fx:id="stockActual" style="-fx-font-size: 14px;"
                    GridPane.rowIndex="1" GridPane.columnIndex="1"/>
 
         <Label text="Umbral actual:" style="-fx-font-size: 14px;"
                GridPane.rowIndex="1" GridPane.columnIndex="2"/>
-        <TextField fx:id="umbralActualField" style="-fx-font-size: 14px;"
+        <TextField fx:id="umbralActual" style="-fx-font-size: 14px;"
                    GridPane.rowIndex="1" GridPane.columnIndex="3"/>
     </GridPane>
 
@@ -42,30 +42,32 @@
     <GridPane hgap="10" vgap="10" style="-fx-padding: 10px 0;">
         <columnConstraints>
             <ColumnConstraints halignment="RIGHT" minWidth="100"/>
-            <ColumnConstraints halignment="LEFT" minWidth="200"/>
+            <ColumnConstraints halignment="LEFT" minWidth="300"/>
         </columnConstraints>
 
         <Label text="Nuevo Umbral:" style="-fx-font-size: 14px;"
                GridPane.rowIndex="0" GridPane.columnIndex="0"/>
 
         <HBox spacing="10" GridPane.rowIndex="0" GridPane.columnIndex="1">
-            <ComboBox fx:id="nuevoUmbralCombo" style="-fx-font-size: 14px; -fx-pref-width: 120;"/>
+            <!-- ComboBox editable -->
+            <ComboBox fx:id="nuevoUmbralCombo" editable="true"
+                      style="-fx-font-size: 14px; -fx-pref-width: 120;"/>
+            <!-- Texto indicador -->
             <Text text="(Mínimo 1)" style="-fx-font-size: 13px; -fx-fill: #666;"/>
+            <!-- TextField para mostrar texto 'Nuevo umbral: #cantidad' -->
+            <TextField fx:id="nuevoUmbral" editable="false"
+                       style="-fx-font-size: 13px; -fx-pref-width: 180;"/>
         </HBox>
 
-        <Label text="Habilitar alertas:" style="-fx-font-size: 14px;"
-               GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-        <Button text="Agregar" onAction="#handleAgregarAlerta"
-                style="-fx-font-size: 14px; -fx-pref-width: 100;"
-                GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+        <!-- Botones de acción -->
+        <HBox spacing="15" style="-fx-padding: 20px 0 0 0; -fx-alignment: CENTER;"
+              GridPane.rowIndex="1" GridPane.columnIndex="0" GridPane.columnSpan="2">
+            <Button text="Guardar cambios" onAction="#handleGuardar"
+                    style="-fx-font-size: 14px; -fx-pref-width: 150; -fx-pref-height: 35;"/>
+            <Button text="Cancelar" onAction="#handleCancelar"
+                    style="-fx-font-size: 14px; -fx-pref-width: 150; -fx-pref-height: 35;"/>
+        </HBox>
     </GridPane>
 
-    <!-- Botones de acción -->
-    <HBox spacing="15" style="-fx-padding: 20px 0 0 0; -fx-alignment: CENTER;">
-        <Button text="Guardar cambios" onAction="#handleGuardar"
-                style="-fx-font-size: 14px; -fx-pref-width: 150; -fx-pref-height: 35;"/>
-        <Button text="Cancelar" onAction="#handleCancelar"
-                style="-fx-font-size: 14px; -fx-pref-width: 150; -fx-pref-height: 35;"/>
-    </HBox>
-
 </VBox>
+

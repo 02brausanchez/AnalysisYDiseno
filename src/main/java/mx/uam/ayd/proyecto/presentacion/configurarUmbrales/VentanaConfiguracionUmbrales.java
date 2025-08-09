@@ -27,12 +27,15 @@ import java.awt.Button;
 import java.awt.Label;
 //import java.awt.TextField;
 import javafx.scene.control.TextField;
+
+import java.awt.event.ActionEvent;
 import java.io.IOException;
 
 import mx.uam.ayd.proyecto.negocio.modelo.Umbral;
 import mx.uam.ayd.proyecto.negocio.ServicioUmbrales;
 import mx.uam.ayd.proyecto.negocio.modelo.Umbral;
 
+import javax.swing.*;
 import java.io.InputStream;
 import java.util.List;
 
@@ -94,9 +97,7 @@ public class VentanaConfiguracionUmbrales {
     /**
      * Constructor without UI initialization
      */
-    public VentanaConfiguracionUmbrales(){
-        // Don't initialize JavaFX components in constructor
-    }
+    public VentanaConfiguracionUmbrales(){/*Don't initialize JavaFX components in constructor*/}
 
     /**
      * Initialize UI components on the JavaFX application thread
@@ -116,7 +117,7 @@ public class VentanaConfiguracionUmbrales {
             // Load FXML
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ventana-menu-principal-umbrales.fxml"));
             loader.setController(this);
-            Scene scene = new Scene(loader.load(), 450, 400);
+            Scene scene = new Scene(loader.load(), 850, 600);
             stage = new Stage();
             stage.setTitle("Gestion de stock");
             stage.setScene(scene);
@@ -206,29 +207,38 @@ public class VentanaConfiguracionUmbrales {
     }
 
     /*
-        Metodo para abrir la ventana de edicion
+     * Método para abrir la ventana de edición de umbral
      */
     private void abrirVentanaEdicionUmbral(Producto producto) {
         try {
-            // 1. Crear el controlador manualmente con su dependencia
-            ControlConfiguracionUmbrales controlador = new ControlConfiguracionUmbrales(ventana);
+            // 1. Crear el controlador de configuración de umbrales
+            ControlConfiguracionUmbrales controlador = new ControlConfiguracionUmbrales();
 
-            // 2. Cargar el FXML y asignar el controlador antes de llamar a load()
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ventana-editar-umbral.fxml"));
-            loader.setController(controlador);
-            Parent root = loader.load();
-
-            // 3. Inyectar las demás dependencias y datos
-            controlador.setProducto(producto);
+            // 2. Inyectar dependencias manualmente (servicio y callback)
             controlador.setServicioUmbrales(servicioUmbrales);
             controlador.setCallbackActualizacion(() -> tablaProductos.refresh());
 
-            // 4. Mostrar la nueva ventana
+            // 3. Configurar el FXMLLoader y establecer el controlador
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ventana-editar-umbral.fxml"));
+            loader.setController(controlador);
+
+            // 4. Cargar la vista (raíz)
+            Parent root = loader.load();
+
+            // 5. Pasar el producto al controlador para cargar datos en la vista
+            controlador.setProducto(producto);
+
+            // 6. Crear la nueva ventana modal para editar umbral
             Stage stage = new Stage();
             stage.setTitle("Editar Umbral - " + producto.getNombre());
-            stage.setScene(new Scene(root));
+            stage.setScene(new Scene(root, 850, 600));
             stage.initModality(Modality.APPLICATION_MODAL);
+
+            // 7. Mostrar ventana y esperar cierre
             stage.showAndWait();
+
+            // Opcional: refrescar la tabla luego de cerrar ventana
+            tablaProductos.refresh();
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -241,17 +251,12 @@ public class VentanaConfiguracionUmbrales {
         }
     }
 
-
-
-
     /*
      * Establece el controlador asociado a esta ventana
      *
      * @param control El controlador asociado
      */
-    public void setControlConfiguracionUmbrales(ControlConfiguracionUmbrales control) {
-        this.control = control;
-    }
+    public void setControlConfiguracionUmbrales(ControlConfiguracionUmbrales control) {this.control = control;}
 
     /*
        Muestra la ventana y establece los datos
@@ -268,26 +273,6 @@ public class VentanaConfiguracionUmbrales {
         tablaProductos.setItems(data);
 
         stage.show();
-        /*
-        Platform.runLater(() -> {
-            // Configurar tabla
-            columnaNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
-            columnaStock.setCellValueFactory(new PropertyValueFactory<>("cantidadStock"));
-            columnaUmbral.setCellValueFactory(cellData -> {
-                Producto producto = cellData.getValue();
-                return new SimpleIntegerProperty(
-                        producto.getUmbral() != null ? producto.getUmbral().getValorMinimo() : 1
-                ).asObject();
-            });
-
-            tablaProductos.getItems().setAll(productos);
-
-            // Seleccionar el primer producto por defecto
-            if (!productos.isEmpty()) {
-                tablaProductos.getSelectionModel().selectFirst();
-                actualizarPanelEdicion(productos.get(0));
-            }
-        });*/
     }
 
     /*
@@ -364,44 +349,8 @@ public class VentanaConfiguracionUmbrales {
 
     // FXML Event Handlers
 
-    /*
     @FXML
-    private void handleAgregarAlerta() {
-        // Aquí puedes implementar la lógica luego
-        System.out.println("Botón 'Agregar' presionado");
-    }*/
-
-
-    @FXML
-    private void handleEditarUmbral() {
-        Producto seleccionado = tablaProductos.getSelectionModel().getSelectedItem();
-        if (seleccionado != null) {
-            actualizarPanelEdicion(seleccionado);
-        }
-    }
-
-    @FXML
-    private void handleGuardar() {
-        if (productoSeleccionado == null) {
-            muestraDialogoConMensaje("Seleccione un producto primero");
-            return;
-        }
-
-        try {
-            int nuevoUmbral = nuevoUmbralCombo.getValue();
-            control.manejarEdicionUmbral(productoSeleccionado.getIdProducto(), nuevoUmbral);
-            muestraDialogoConMensaje("Umbral actualizado correctamente");
-
-            // Actualizar la tabla
-            productoSeleccionado.getUmbral().setValorMinimo(nuevoUmbral);
-            tablaProductos.refresh();
-        } catch (Exception e) {
-            muestraDialogoConMensaje("Error al actualizar: " + e.getMessage());
-        }
-    }
-
-    @FXML
-    private void handleCancelar() {
+    private void handleCancelar(ActionEvent event) {
         control.termina();
     }
 

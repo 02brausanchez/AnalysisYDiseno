@@ -127,4 +127,8 @@ public class ServicioUmbrales {
         producto.setUmbral(umbral); // Sincronización bidireccional
         umbralRepository.save(umbral);
     }
+
+    private void notificarActualizacon(){
+
+    }
 }

@@ -58,6 +58,6 @@ public class Controlinventario {
     }
 
 
-
-
+    public void agregarProducto() {
+    }
 }

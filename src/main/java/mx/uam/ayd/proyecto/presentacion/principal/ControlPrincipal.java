@@ -2,6 +2,7 @@ package mx.uam.ayd.proyecto.presentacion.principal;
 
 import jakarta.annotation.PostConstruct;
 
+import mx.uam.ayd.proyecto.presentacion.Inventario.Controlinventario;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -23,7 +24,9 @@ public class ControlPrincipal {
 	private final ControlListarUsuarios controlListarUsuarios;
 	private final ControlListarGrupos controlListarGrupos;
 	private final ControlConfiguracionUmbrales controlConfiguracionUmbrales;
-	private final VentanaPrincipal ventana;
+    private final Controlinventario controlinventario;
+
+    private final VentanaPrincipal ventana;
 
 	
 	@Autowired
@@ -32,12 +35,14 @@ public class ControlPrincipal {
 			ControlListarUsuarios controlListarUsuarios,
 			ControlListarGrupos controlListarGrupos,
 			ControlConfiguracionUmbrales controlConfiguracionUmbrales,
-			VentanaPrincipal ventana) {
+            Controlinventario controlinventario,
+            VentanaPrincipal ventana) {
 		this.controlAgregarUsuario = controlAgregarUsuario;
 		this.controlListarUsuarios = controlListarUsuarios;
 		this.controlListarGrupos = controlListarGrupos;
 		this.controlConfiguracionUmbrales = controlConfiguracionUmbrales;
-		this.ventana = ventana;
+        this.controlinventario = controlinventario;
+        this.ventana = ventana;
 	}
 	
 	/**
@@ -62,6 +67,13 @@ public class ControlPrincipal {
 	 */
 	public void configurarUmbrales() {controlConfiguracionUmbrales.inicia();}
 
+    /*
+     * Metodo que arranca la historia de usuario "Listar prodcutos "
+     *
+     * */
+    public void Inventario() {
+        controlinventario.inicia();
+    }
 
 	/**
 	 * Método que arranca la historia de usuario "agregar usuario"

@@ -2,23 +2,18 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.geometry.Insets?>
 
-<VBox xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1"
-      spacing="10" style="-fx-padding: 15px;">
+<VBox spacing="10" style="-fx-padding: 15px;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1">
 
-    <Label text="Mi Aplicación" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+    <Label style="-fx-font-size: 18px; -fx-font-weight: bold;" text="Mi Aplicación" />
 
-    <Button text="Agregar usuario" onAction="#handleAgregarUsuario"
-            style="-fx-min-width: 200px; -fx-min-height: 30px;"/>
+    <Button onAction="#handleAgregarUsuario" style="-fx-min-width: 200px; -fx-min-height: 30px;" text="Agregar usuario" />
 
-    <Button text="Listar usuarios" onAction="#handleListarUsuarios"
-            style="-fx-min-width: 200px; -fx-min-height: 30px;"/>
+    <Button onAction="#handleListarUsuarios" style="-fx-min-width: 200px; -fx-min-height: 30px;" text="Listar usuarios" />
 
-    <Button text="Listar grupos" onAction="#handleListarGrupos"
-            style="-fx-min-width: 200px; -fx-min-height: 30px;"/>
+    <Button onAction="#handleListarGrupos" style="-fx-min-width: 200px; -fx-min-height: 30px;" text="Listar grupos" />
 
-    <Button text="Configurar Umbrales" onAction="#handleConfigurarUmbrales"
-            style="-fx-min-width: 200px; -fx-min-height: 30px;"/>
+    <Button onAction="#handleConfigurarUmbrales" style="-fx-min-width: 200px; -fx-min-height: 30px;" text="Configurar Umbrales" />
+   <Button mnemonicParsing="false" onAction="#handleInventario" prefHeight="31.0" prefWidth="200.0" text="Inventario" />
 
 </VBox>

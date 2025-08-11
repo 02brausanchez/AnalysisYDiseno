@@ -19,11 +19,15 @@ public class DetalleVenta {
     private long idDetalleVenta;
 
     private int cantidadVendida;
-    private float subtotal;
+    private double subtotal;
 
     @ManyToOne
     @JoinColumn(name = "venta_id")
     private Venta venta;
+
+    @ManyToOne
+    @JoinColumn(name = "producto_id")
+    private Producto producto;
 
     public long getIdDetalleVenta() {
         return idDetalleVenta;
@@ -41,15 +45,30 @@ public class DetalleVenta {
         this.cantidadVendida = cantidadVendida;
     }
 
-    public float getSubtotal() {return subtotal;}
+    public double getSubtotal() {return subtotal;}
 
-    public void setSubtotal(float subtotal) {this.subtotal = subtotal;}
+    public void setSubtotal(double subtotal) {this.subtotal = subtotal;}
+
+    public Venta getVenta() {
+        return venta;
+    }
 
     public void setVenta(Venta venta){
         if(venta == null){
             throw new IllegalArgumentException("La venta no puede ser null");
         }
         this.venta = venta;
+    }
+
+    public Producto getProducto() {
+        return producto;
+    }
+
+    public void setProducto(Producto producto){
+        if(producto == null){
+            throw new IllegalArgumentException("El producto no puede ser null");
+        }
+        this.producto = producto;
     }
 
     @Override
@@ -69,6 +88,6 @@ public class DetalleVenta {
 
     @Override
     public String toString() {
-        return "DetalleVenta [idDetalleVenta=" + idDetalleVenta + ", cantidadVendida=" + cantidadVendida + ", subtotal=" + subtotal + "idVenta=" + (venta != null ? venta.getIdVenta() : "null") + "]";
+        return "DetalleVenta [idDetalleVenta=" + idDetalleVenta + ", cantidadVendida=" + cantidadVendida + ", subtotal=" + subtotal + ", idVenta=" + (venta != null ? venta.getIdVenta() : "null") + ", idProducto=" + (producto != null ? producto.getIdProducto() : "null") + "]";
     }
 }

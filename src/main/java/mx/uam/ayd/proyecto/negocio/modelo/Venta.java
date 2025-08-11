@@ -23,24 +23,30 @@ public class Venta {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idVenta;
-
     private LocalDate fecha;
-    private float montoTotal;
+    private double montoTotal;
 
     @OneToMany(mappedBy = "venta", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
-    private final List<DetalleVenta> detalleVentas = new ArrayList<>();
+    private final List<DetalleVenta> detallesVenta = new ArrayList<>();
 
     public Long getIdVenta() {
         return idVenta;
     }
-
 
     public void setIdVenta(Long idVenta) {
         this.idVenta = idVenta;
     }
 
     public List<DetalleVenta> getDetalleVentas() {
-        return detalleVentas;
+        return detallesVenta;
+    }
+
+    public double getMontoTotal() {
+        return montoTotal;
+    }
+
+    public void setMontoTotal(double montoTotal) {
+        this.montoTotal = montoTotal;
     }
 
     public LocalDate getFecha() {
@@ -54,11 +60,11 @@ public class Venta {
             throw new IllegalArgumentException("El detalleVenta no puede ser null");
         }
 
-        if (detalleVentas.contains(detalleVenta)) {
+        if (detallesVenta.contains(detalleVenta)) {
             return false;
         }
 
-        return detalleVentas.add(detalleVenta);
+        return detallesVenta.add(detalleVenta);
     }
 
 

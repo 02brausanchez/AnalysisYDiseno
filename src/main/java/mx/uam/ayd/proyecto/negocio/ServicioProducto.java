@@ -30,53 +30,43 @@ public class ServicioProducto {
         this.productoRepository = productoRepository;
     }
 
-    public boolean buscarProducto(String nombre, TipoProducto tipoProducto, MarcaProducto marcaProducto) {
-        Optional<Producto> resultado = productoRepository.findByNombreAndTipoProductoAndMarcaProducto(nombre, tipoProducto, marcaProducto);
-        if (resultado.isPresent()) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
     public Producto agregarProducto(String nombre, TipoProducto tipoProducto, MarcaProducto marcaProducto,
                                    double precio, int cantidad, UnidadProducto unidadProducto, LocalDate fechaCaducidad) {
-            if (buscarProducto(nombre, tipoProducto, marcaProducto)) {
-                throw new IllegalStateException("El producto ya existe en la base de datos.");
-            }
+        // Buscar si ya existe el producto con esos datos
+        Optional<Producto> productoExistente = productoRepository.findByNombreAndTipoProductoAndMarcaProducto(nombre, tipoProducto, marcaProducto);
 
-            // Validaciones
-            if (nombre == null || nombre.trim().isEmpty()) {
-                throw new IllegalArgumentException("El nombre del producto no puede ser nulo o vacío");
-            }
+        if (productoExistente.isPresent()) {
+            throw new IllegalStateException("El producto ya existe en la base de datos.");
+        }
+        if (nombre == null || nombre.trim().isEmpty()) {
+            throw new IllegalArgumentException("El nombre del producto no puede ser nulo o vacío");
+        }
+        if (tipoProducto == null) {
+            throw new IllegalArgumentException("El tipo de producto no puede ser nulo");
+        }
+        if (marcaProducto == null) {
+            throw new IllegalArgumentException("La marca del producto no puede ser nula");
+        }
+        if (precio <= 0) {
+            throw new IllegalArgumentException("El precio debe ser mayor a cero");
+        }
+        if (unidadProducto == null) {
+            throw new IllegalArgumentException("La unidad del producto no puede ser nula");
+        }
+        if(fechaCaducidad.isBefore(LocalDate.now().plusWeeks(1))) {
+            throw new IllegalArgumentException("La fecha no puede ser anterior a partir de una semana");
+        }
+        // Crear el producto
+        Producto producto = new Producto();
+        producto.setNombre(nombre);
+        producto.setTipoProducto(tipoProducto);
+        producto.setMarcaProducto(marcaProducto);
+        producto.setPrecio(precio);
+        producto.setCantidadStock(cantidad);
+        producto.setUnidadProducto(unidadProducto);
+        producto.setFechaCaducidad(fechaCaducidad);
 
-            if (tipoProducto == null) {
-                throw new IllegalArgumentException("El tipo de producto no puede ser nulo");
-            }
-
-            if (marcaProducto == null) {
-                throw new IllegalArgumentException("La marca del producto no puede ser nula");
-            }
-
-            if (precio <= 0) {
-                throw new IllegalArgumentException("El precio debe ser mayor a cero");
-            }
-
-            if (unidadProducto == null) {
-                throw new IllegalArgumentException("La unidad del producto no puede ser nula");
-            }
-
-            // Crear el producto
-            Producto producto = new Producto();
-            producto.setNombre(nombre);
-            producto.setTipoProducto(tipoProducto);
-            producto.setMarcaProducto(marcaProducto);
-            producto.setPrecio(precio);
-            producto.setCantidadStock(cantidad);
-            producto.setUnidadProducto(unidadProducto);
-            producto.setFechaCaducidad(fechaCaducidad);
-
-            return productoRepository.save(producto);
+        return productoRepository.save(producto);
     }
 
     public Producto eliminarProducto(String nombre) {

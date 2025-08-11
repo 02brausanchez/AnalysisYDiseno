@@ -19,7 +19,7 @@ public class DetalleVenta {
     private long idDetalleVenta;
 
     private int cantidadVendida;
-    private float subtotal;
+    private double subtotal;
 
     @ManyToOne
     @JoinColumn(name = "venta_id")
@@ -28,6 +28,14 @@ public class DetalleVenta {
     @ManyToOne
     @JoinColumn(name = "producto_id")
     private Producto producto;
+
+    public Venta  getVenta() {
+        return venta;
+    }
+
+    public void setVenta(){
+        this.venta = new Venta();
+    }
 
     public Producto getProducto() {
         return producto;
@@ -53,9 +61,9 @@ public class DetalleVenta {
         this.cantidadVendida = cantidadVendida;
     }
 
-    public float getSubtotal() {return subtotal;}
+    public double getSubtotal() {return subtotal;}
 
-    public void setSubtotal(float subtotal) {this.subtotal = subtotal;}
+    public void setSubtotal(double subtotal) {this.subtotal = subtotal;}
 
     public void setVenta(Venta venta){
         if(venta == null){

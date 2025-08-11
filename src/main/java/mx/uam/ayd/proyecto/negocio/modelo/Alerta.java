@@ -88,3 +88,4 @@ public class Alerta {
                 ", enviadaPorCorreo=" + enviadoPorCorreo + ", fechaHoraEnvio=" + fechaHoraEnvio + "]";
     }
 }
+

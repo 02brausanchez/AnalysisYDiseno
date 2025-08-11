@@ -112,7 +112,7 @@ public class ProyectoApplication {
 		grupoOps.setNombre("Operadores");
 		grupoRepository.save(grupoOps);*/
 
-		// Se agrega una prueba manualmente:
+		//Se agrega una prueba manualmente:
 		Grupo grupoAdmin = new Grupo();
 		grupoAdmin.setNombre("Administradores");
 		grupoRepository.save(grupoAdmin);

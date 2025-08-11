@@ -15,6 +15,8 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.DataFormat;
 import javafx.stage.Stage;
 import mx.uam.ayd.proyecto.negocio.modelo.Producto;
+import mx.uam.ayd.proyecto.presentacion.agregarProducto.ControlAgregarProducto;
+import mx.uam.ayd.proyecto.presentacion.principal.ControlPrincipal;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -44,6 +46,7 @@ public class VentanaInventario {
     @FXML
     private TableColumn<Producto, Integer> stockColumn;
 
+    private ControlAgregarProducto controlAgregarProducto;
     private Controlinventario control;
     private boolean initialized = false;
 
@@ -135,6 +138,12 @@ public class VentanaInventario {
         }
     }
 
+    @FXML
+    private void handleAgregar() {
+        if (control != null) {
+            control.agregarProducto();
+        }
+    }
 
     // FXML Event Handlers
 
@@ -151,7 +160,6 @@ public class VentanaInventario {
         alert.setHeaderText(null);
         alert.setContentText(s);
         alert.showAndWait();
-
     }
 
 }

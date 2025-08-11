@@ -10,9 +10,10 @@ import mx.uam.ayd.proyecto.presentacion.agregarUsuario.ControlAgregarUsuario;
 import mx.uam.ayd.proyecto.presentacion.listarUsuarios.ControlListarUsuarios;
 import mx.uam.ayd.proyecto.presentacion.listarGrupos.ControlListarGrupos;
 import mx.uam.ayd.proyecto.presentacion.configurarUmbrales.ControlConfiguracionUmbrales;
+
 /**
  * Esta clase lleva el flujo de control de la ventana principal
- * 
+ *
  * @author humbertocervantes
  *
  */
@@ -23,27 +24,27 @@ public class ControlPrincipal {
 	private final ControlListarUsuarios controlListarUsuarios;
 	private final ControlListarGrupos controlListarGrupos;
 	private final ControlConfiguracionUmbrales controlConfiguracionUmbrales;
-    private final Controlinventario controlinventario;
+	private final Controlinventario controlinventario;
 
-    private final VentanaPrincipal ventana;
+	private final VentanaPrincipal ventana;
 
-	
+
 	@Autowired
 	public ControlPrincipal(
 			ControlAgregarUsuario controlAgregarUsuario,
 			ControlListarUsuarios controlListarUsuarios,
 			ControlListarGrupos controlListarGrupos,
 			ControlConfiguracionUmbrales controlConfiguracionUmbrales,
-            Controlinventario controlinventario,
-            VentanaPrincipal ventana) {
+			Controlinventario controlinventario,
+			VentanaPrincipal ventana) {
 		this.controlAgregarUsuario = controlAgregarUsuario;
 		this.controlListarUsuarios = controlListarUsuarios;
 		this.controlListarGrupos = controlListarGrupos;
 		this.controlConfiguracionUmbrales = controlConfiguracionUmbrales;
-        this.controlinventario = controlinventario;
-        this.ventana = ventana;
+		this.controlinventario = controlinventario;
+		this.ventana = ventana;
 	}
-	
+
 	/**
 	 * Método que se ejecuta después de la construcción del bean
 	 * y realiza la conexión bidireccional entre el control principal y la ventana principal
@@ -52,10 +53,10 @@ public class ControlPrincipal {
 	public void init() {
 		ventana.setControlPrincipal(this);
 	}
-	
+
 	/**
 	 * Inicia el flujo de control de la ventana principal
-	 * 
+	 *
 	 */
 	public void inicia() {
 		ventana.muestra();
@@ -66,24 +67,25 @@ public class ControlPrincipal {
 	 */
 	public void configurarUmbrales() {controlConfiguracionUmbrales.inicia();}
 
-    /*
-     * Metodo que arranca la historia de usuario "Listar prodcutos "
-     *
-     * */
-    public void Inventario() {
-        controlinventario.inicia();
-    }
+	/*
+	 * Metodo que arranca la historia de usuario "Listar prodcutos "
+	 *
+	 * */
+	public void Inventario() {
+		controlinventario.inicia();
+	}
+
 	/**
 	 * Método que arranca la historia de usuario "agregar usuario"
-	 * 
+	 *
 	 */
 	public void agregarUsuario() {
 		controlAgregarUsuario.inicia();
 	}
-	
+
 	/**
 	 * Método que arranca la historia de usuario "listar usuarios"
-	 * 
+	 *
 	 */
 	public void listarUsuarios() {
 		controlListarUsuarios.inicia();
@@ -91,7 +93,7 @@ public class ControlPrincipal {
 
 	/**
 	 * Método que arranca la historia de usuario "listar grupos"
-	 * 
+	 *
 	 */
 	public void listarGrupos() {
 		controlListarGrupos.inicia();

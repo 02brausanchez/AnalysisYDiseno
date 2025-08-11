@@ -53,9 +53,12 @@ public class ServicioProducto {
         if (unidadProducto == null) {
             throw new IllegalArgumentException("La unidad del producto no puede ser nula");
         }
-        if(fechaCaducidad.isBefore(LocalDate.now().plusWeeks(1))) {
-            throw new IllegalArgumentException("La fecha no puede ser anterior a partir de una semana");
+        if (fechaCaducidad != null) {
+            if(fechaCaducidad.isBefore(LocalDate.now().plusWeeks(1))) {
+                throw new IllegalArgumentException("La fecha no puede ser anterior a partir de una semana");
+            }
         }
+
         // Crear el producto
         Producto producto = new Producto();
         producto.setNombre(nombre);

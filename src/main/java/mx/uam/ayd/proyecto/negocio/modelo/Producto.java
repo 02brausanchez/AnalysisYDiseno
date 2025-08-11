@@ -50,6 +50,15 @@ public class Producto {
     /**
      * @return get
      */
+
+    public Umbral getUmbral() {
+        return umbral;
+    }
+
+    public void setUmbral(Umbral umbral) {
+        this.umbral = umbral;
+    }
+
     public Long getIdProducto() {
         return idProducto;
     }
@@ -147,4 +156,5 @@ public class Producto {
     public String toString() {
         return "Prodcuto [idProducto=" + idProducto + ", nombre=" + nombre + ", marca=" + marcaProducto + ", precio=" + precio + "]";
     }
+
 }

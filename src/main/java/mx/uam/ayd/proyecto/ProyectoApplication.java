@@ -5,12 +5,16 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 
+
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.stage.Stage;
-
 import mx.uam.ayd.proyecto.datos.GrupoRepository;
+import mx.uam.ayd.proyecto.datos.ProductoRepository;
+import mx.uam.ayd.proyecto.datos.UmbralRepository;
 import mx.uam.ayd.proyecto.negocio.modelo.Grupo;
+import mx.uam.ayd.proyecto.negocio.modelo.Producto;
+import mx.uam.ayd.proyecto.negocio.modelo.Umbral;
 import mx.uam.ayd.proyecto.presentacion.principal.ControlPrincipal;
 
 /**
@@ -27,6 +31,11 @@ public class ProyectoApplication {
 
 	private final ControlPrincipal controlPrincipal;
 	private final GrupoRepository grupoRepository;
+
+	//Se añaden productos y umbrales para hacer una prueba manualmente
+	/*private final ProductoRepository productoRepository;
+	private final UmbralRepository umbralRepository;*/
+
 	
 	@Autowired
 	public ProyectoApplication(ControlPrincipal controlPrincipal, GrupoRepository grupoRepository) {

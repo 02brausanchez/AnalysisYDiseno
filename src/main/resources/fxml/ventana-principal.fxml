@@ -2,7 +2,6 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.geometry.Insets?>
 
 <VBox xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" 
       spacing="10" style="-fx-padding: 15px;">
@@ -17,5 +16,10 @@
     
     <Button text="Listar grupos" onAction="#handleListarGrupos" 
             style="-fx-min-width: 200px; -fx-min-height: 30px;"/>
-    
-</VBox> 
+
+    <Button text="Configurar umbrales" onAction="#handleConfigurarUmbrales"
+            style="-fx-min-width: 200px; -fx-min-height: 30px;"/>
+
+    <Button text="Inventario" onAction="#handleInventario"
+            style="-fx-min-width: 200px; -fx-min-height: 30px;"/>
+</VBox>

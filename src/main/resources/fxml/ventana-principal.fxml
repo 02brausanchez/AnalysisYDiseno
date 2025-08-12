@@ -21,4 +21,6 @@
     <Button text="Configurar Umbrales" onAction="#handleConfigurarUmbrales"
             style="-fx-min-width: 200px; -fx-min-height: 30px;"/>
 
+    <Button text="Alertas" onAction="#handleMostrarAlertas"
+            style="-fx-min-width: 200px; -fx-min-height: 30px;"/>
 </VBox>

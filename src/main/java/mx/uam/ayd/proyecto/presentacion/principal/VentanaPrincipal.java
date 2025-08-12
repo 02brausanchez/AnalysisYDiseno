@@ -105,4 +105,13 @@ public class VentanaPrincipal {
 			control.listarGrupos();
 		}
 	}
+
+	@FXML
+	private void handleMostrarAlertas() {
+		if (control != null) {
+			control.mostrarAlertas();
+		}
+	}
+
+
 }

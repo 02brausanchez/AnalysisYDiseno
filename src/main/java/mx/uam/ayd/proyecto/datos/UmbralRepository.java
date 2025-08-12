@@ -1,10 +1,8 @@
 package mx.uam.ayd.proyecto.datos;
 
-import mx.uam.ayd.proyecto.negocio.modelo.Producto;
+import mx.uam.ayd.proyecto.negocio.modelo.Umbral;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
-
-import mx.uam.ayd.proyecto.negocio.modelo.Umbral;
 
 import java.util.List;
 
@@ -15,4 +13,6 @@ public interface UmbralRepository extends CrudRepository<Umbral, Long> {
     List<Umbral> findUmbralsConStockPositivo();
 
     Umbral findByIdUmbral(Long idUmbral);
+
+
 }

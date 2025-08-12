@@ -1,22 +1,10 @@
 package mx.uam.ayd.proyecto.negocio.modelo;
 
-import java.rmi.server.UnicastRemoteObject;
+import jakarta.persistence.*;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-//import java.time;
-
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.OneToMany;
 
 /**
  * Entidad de negocio Grupo
@@ -28,6 +16,7 @@ import jakarta.persistence.OneToMany;
 public class Producto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+
     private Long idProducto;
     private String nombre;
     @Enumerated(EnumType.STRING)
@@ -41,7 +30,7 @@ public class Producto {
     private LocalDate fechaCaducidad;
 
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "producto", cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "umbral_id")
     private Umbral umbral;
 
@@ -123,7 +112,9 @@ public class Producto {
      * @return true si el usuario se agregó correctamente, false si ya estaba en el grupo
      * @throws IllegalArgumentException si el usuario es nulo
      **/
-    public boolean addUmbral(Umbral umbral) {
+
+
+       public boolean addUmbral(Umbral umbral) {
         if (umbral == null) {
             throw new IllegalArgumentException("El umbral no puede ser null");
         }
@@ -156,5 +147,6 @@ public class Producto {
     public String toString() {
         return "Prodcuto [idProducto=" + idProducto + ", nombre=" + nombre + ", marca=" + marcaProducto + ", precio=" + precio + "]";
     }
+
 
 }

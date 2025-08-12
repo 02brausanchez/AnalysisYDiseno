@@ -17,7 +17,9 @@ public class ServicioInventario {
     public ServicioInventario(ProductoRepository productoRepository) {
         this.productoRepository = productoRepository;
     }
-    public List<Producto> recuperaProducto() {
+
+
+   public List<Producto> recuperaProducto() {
         List <Producto> productos = new ArrayList<>();
 
         for(Producto producto:productoRepository.findAll()) {
@@ -28,20 +30,20 @@ public class ServicioInventario {
     }
     public void eliminaProducto(Long idproducto) {
 
-        // Validar que no sean nulos o vacíos
-        if (idproducto == null || idproducto <=0) {
+        if (idproducto == null || idproducto <= 0) {
             throw new IllegalArgumentException("El Id del producto no puede ser nulo o negativo");
         }
 
-        // Buscar al Producto
         Producto producto = productoRepository.findById(idproducto).orElse(null);
-
         if (producto == null) {
             throw new IllegalArgumentException("No se encontró el producto");
         }
 
-        // Eliminar al prodcuto de la base de datos
-        productoRepository.delete(producto);
+
+
+        productoRepository.delete(producto); // <-- se eliminan también los umbrales
+
+
     }
 
 

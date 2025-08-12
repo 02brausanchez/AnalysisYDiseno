@@ -1,21 +1,20 @@
 package mx.uam.ayd.proyecto;
 
-import mx.uam.ayd.proyecto.datos.UmbralRepository;
-import mx.uam.ayd.proyecto.datos.ProductoRepository;
-
-import mx.uam.ayd.proyecto.negocio.modelo.Producto;
-import mx.uam.ayd.proyecto.negocio.modelo.Umbral;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 
+
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.stage.Stage;
-
 import mx.uam.ayd.proyecto.datos.GrupoRepository;
+import mx.uam.ayd.proyecto.datos.ProductoRepository;
+import mx.uam.ayd.proyecto.datos.UmbralRepository;
 import mx.uam.ayd.proyecto.negocio.modelo.Grupo;
+import mx.uam.ayd.proyecto.negocio.modelo.Producto;
+import mx.uam.ayd.proyecto.negocio.modelo.Umbral;
 import mx.uam.ayd.proyecto.presentacion.principal.ControlPrincipal;
 
 /**
@@ -32,17 +31,16 @@ public class ProyectoApplication {
 
 	private final ControlPrincipal controlPrincipal;
 	private final GrupoRepository grupoRepository;
+
 	//Se añaden productos y umbrales para hacer una prueba manualmente
-	private final ProductoRepository productoRepository;
-	private final UmbralRepository umbralRepository;
+	/*private final ProductoRepository productoRepository;
+	private final UmbralRepository umbralRepository;*/
 
 	
 	@Autowired
-	public ProyectoApplication(ControlPrincipal controlPrincipal, GrupoRepository grupoRepository, ProductoRepository productoRepository, UmbralRepository umbralRepository) {
+	public ProyectoApplication(ControlPrincipal controlPrincipal, GrupoRepository grupoRepository) {
 		this.controlPrincipal = controlPrincipal;
 		this.grupoRepository = grupoRepository;
-		this.productoRepository = productoRepository;
-		this.umbralRepository = umbralRepository;
 	}
 
 	/**
@@ -103,52 +101,12 @@ public class ProyectoApplication {
 	 */
 	public void inicializaBD() {
 		// Vamos a crear los dos grupos de usuarios
-		/*
 		Grupo grupoAdmin = new Grupo();
 		grupoAdmin.setNombre("Administradores");
 		grupoRepository.save(grupoAdmin);
 		
 		Grupo grupoOps = new Grupo();
 		grupoOps.setNombre("Operadores");
-		grupoRepository.save(grupoOps);*/
-
-		// Se agrega una prueba manualmente:
-		Grupo grupoAdmin = new Grupo();
-		grupoAdmin.setNombre("Administradores");
-		grupoRepository.save(grupoAdmin);
-
-		// Nuevos datos de prueba
-
-		// Probando con un producto
-		Producto p1 = new Producto();
-		p1.setNombre("P1");
-		p1.setCantidadStock(4);
-
-		Umbral u1 = new Umbral();
-		u1.setValorMinimo(25);
-
-		//Establecer relacion bidireccional
-		p1.setUmbral(u1);
-		u1.setProducto(p1);
-
-		//Solo se guarda el producto
-		productoRepository.save(p1);
-
-
-		// Probando con varios productos
-		for (int i = 1; i <= 10; i++) {
-			Producto p = new Producto();
-			p.setNombre("Producto " + i);
-			p.setCantidadStock(i * 3);
-
-			Umbral u = new Umbral();
-			u.setValorMinimo(i + 2);
-
-			p.setUmbral(u);
-			u.setProducto(p);
-
-			productoRepository.save(p); // guarda producto y umbral
-		}
-
+		grupoRepository.save(grupoOps);
 	}
 }

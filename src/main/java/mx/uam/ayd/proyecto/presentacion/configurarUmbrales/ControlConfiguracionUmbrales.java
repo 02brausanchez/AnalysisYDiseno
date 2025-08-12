@@ -1,65 +1,81 @@
 package mx.uam.ayd.proyecto.presentacion.configurarUmbrales;
 
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
-
-//import mx.uam.ayd.proyecto.presentacion.configurarUmbrales.ControlConfiguracionUmbrales;
-//import mx.uam.ayd.proyecto.presentacion.alertas.ControlConfiguracionAlerta;
-//import mx.uam.ayd.proyecto.presentacion.configurarUmbrales.VentanaConfiguracionUmbrales;
-
-import mx.uam.ayd.proyecto.negocio.ServicioUmbrales;
-import mx.uam.ayd.proyecto.negocio.modelo.Umbral;
-import mx.uam.ayd.proyecto.negocio.modelo.Producto;
-
+import javafx.stage.Modality;
 import javafx.stage.Stage;
-//import mx.uam.ayd.proyecto.negocio.ServicioAlerta;
-//import mx.uam.ayd.proyecto.negocio.modelo.Umbral;
-//import org.slf4j.Logger;
-//import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-//import mx.uam.ayd.proyecto.negocio.modelo.Producto;
-
-//import mx.uam.ayd.proyecto.presentacion.alertas.ControlConfiguracionAlerta;
-
 import jakarta.annotation.PostConstruct;
+import mx.uam.ayd.proyecto.negocio.ServicioUmbrales;
+import mx.uam.ayd.proyecto.negocio.modelo.Producto;
+import mx.uam.ayd.proyecto.negocio.modelo.Umbral;
+
+import java.io.IOException;
 import java.util.List;
 
+/**
+ * @class ControlConfiguracionUmbrales
+ * @brief Controlador para la configuración y edición de umbrales de productos.
+ *
+ * Esta clase actúa como intermediaria entre la capa de presentación (ventanas) y la
+ * capa de negocio (`ServicioUmbrales`), permitiendo al usuario visualizar, editar y
+ * validar los valores mínimos (umbrales) de stock de los productos.
+ *
+ * @details
+ * - Permite mostrar una ventana con la lista de productos y sus umbrales.
+ * - Gestiona el flujo de edición de un umbral específico.
+ * - Realiza validaciones antes de guardar los cambios.
+ * - Interactúa con la clase `VentanaConfiguracionUmbrales` para mostrar mensajes al usuario.
+ *
+ * @see VentanaConfiguracionUmbrales
+ * @see ServicioUmbrales
+ */
 @Component
 public class ControlConfiguracionUmbrales {
 
+    /** Servicio para la gestión de umbrales. */
+    @Autowired
     private ServicioUmbrales servicioUmbrales;
-    //private final ServicioAlerta servicioAlerta;
+
+    /** Ventana de configuración de umbrales asociada. */
+    @Autowired
     private VentanaConfiguracionUmbrales ventana;
 
+    /** Producto actualmente seleccionado para edición. */
     private Producto producto;
-    //private ServicioUmbrales servicio;
-    private Runnable callbackActualizacion;
 
-    //private static final Logger log = LoggerFactory.getLogger(ControlConfiguracionUmbrales.class);
-    @FXML private TextField editUmbral;
-    @FXML private TextField stockActual;
-    @FXML private TextField umbralActual;
-    @FXML private TextField nuevoUmbral;
-    @FXML private ComboBox<Integer> nuevoUmbralCombo;
+    /** Ventana modal utilizada para la edición del umbral. */
+    private Stage stage;
 
+    // ==== Componentes FXML ====
+    @FXML private TextField editUmbral;       /**< Campo para mostrar el nombre del producto en edición. */
+    @FXML private TextField stockActual;      /**< Campo para mostrar el stock actual del producto. */
+    @FXML private TextField umbralActual;     /**< Campo para mostrar el umbral configurado actualmente. */
+    @FXML private TextField nuevoUmbral;      /**< Campo para mostrar el nuevo umbral seleccionado. */
+    @FXML private ComboBox<Integer> nuevoUmbralCombo; /**< ComboBox para elegir el nuevo valor de umbral. */
+
+    /**
+     * @brief Inicializa los componentes de la ventana de edición de umbrales.
+     *
+     * Configura el combo de selección de nuevo umbral (1 a 100), establece los campos no editables,
+     * y añade listeners para actualizar el campo `nuevoUmbral` según la selección.
+     */
     @FXML
     private void initialize() {
-        // Llenar el ComboBox del 1 al 100
         for (int i = 1; i <= 100; i++) {
             nuevoUmbralCombo.getItems().add(i);
         }
 
-        // Hacer editable secciones necesarias
         nuevoUmbralCombo.setEditable(true);
         stockActual.setEditable(false);
         umbralActual.setEditable(false);
         editUmbral.setEditable(false);
 
-        //Listener para actualizar el TextField "nuevoUmbral" con el formato deseado
         nuevoUmbralCombo.valueProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal != null) {
                 nuevoUmbral.setText("Nuevo umbral: " + newVal);
@@ -69,159 +85,150 @@ public class ControlConfiguracionUmbrales {
         });
     }
 
-    public ControlConfiguracionUmbrales() {}
     /**
-     * Método que se ejecuta después de la construcción del bean
-     * y realiza la conexión bidireccional entre el control y la ventana
+     * @brief Asigna el controlador a la ventana de configuración de umbrales.
      */
     @PostConstruct
     public void init() {
         ventana.setControlConfiguracionUmbrales(this);
     }
+
     /**
-     * Inicia la historia de usuario
+     * @brief Inicia el flujo de visualización de productos con stock no nulo.
+     *
+     * Recupera de la capa de negocio los productos con stock disponible y los muestra en la ventana.
+     * Si no hay productos, se muestra un mensaje de error.
      */
     public void inicia() {
         List<Producto> productos = servicioUmbrales.recuperaConStockNoCero();
-        //lógica para mostrar productos
         if (productos.isEmpty()) {
-            ventana.muestraDialogoConMensaje("No hay productos con stock disponible para configurar, por favor agregue manualmente productos");
+            ventana.mostrarError("No hay productos con stock disponible, por favor agregue manualmente productos primero");
         } else {
-            ventana.muestra(productos); // Muestra lista filtrada
+            ventana.muestra(productos);
         }
     }
 
-    @Autowired
-    public void setServicioUmbrales(ServicioUmbrales servicioUmbrales) {
-        this.servicioUmbrales = servicioUmbrales;
-    }
-
-    @Autowired
-    public void setVentanaConfiguracionUmbrales(VentanaConfiguracionUmbrales ventana) {
-        this.ventana = ventana;
-    }
-
-    // Se implementa de acuerdo al diagrama de secuencia
+    /**
+     * @brief Inicia el flujo de edición de un umbral específico.
+     *
+     * @param idProducto ID del producto a editar.
+     * @param minimo Valor mínimo actual del umbral.
+     *
+     * Carga la vista de edición (`ventana-editar-umbral.fxml`), inicializa los campos
+     * con los datos del producto y muestra la ventana en modo modal.
+     */
     public void iniciarEdicionDeUmbral(Long idProducto, int minimo) {
-        cargarDatosProductos(idProducto, minimo);
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ventana-editar-umbral.fxml"));
+            loader.setController(this);
+
+            Parent root = loader.load();
+
+            this.producto = servicioUmbrales.recuperarProductoPorId(idProducto)
+                    .orElseThrow(() -> new IllegalArgumentException("Producto no encontrado"));
+
+            cargarDatosProducto();
+
+            stage = new Stage();
+            stage.setTitle("Editar Umbral - " + producto.getNombre());
+            stage.setScene(new Scene(root, 600, 400));
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.showAndWait();
+
+        } catch (IOException e) {
+            throw new RuntimeException("Error al cargar la ventana de edición", e);
+        }
     }
 
-    public void setProducto(Producto producto) {
-        this.producto = producto;
-        cargarDatosProductos(producto.getIdProducto(), producto.getCantidadStock());
-    }
-
-    public void setCallbackActualizacion(Runnable callback) {
-        this.callbackActualizacion = callbackActualizacion;
-    }
-
-    private void cargarDatosProductos(Long idProducto, int minimo) {
-        // Configurar el campo de edicion con el nombre del producto
+    /**
+     * @brief Carga en la interfaz los datos del producto actualmente seleccionado.
+     */
+    private void cargarDatosProducto() {
         editUmbral.setText(producto.getNombre());
         stockActual.setText(String.valueOf(producto.getCantidadStock()));
 
-        Umbral umbral = servicioUmbrales.findByProducto(producto.getIdProducto());
+        Umbral umbral = servicioUmbrales.findById(producto.getIdProducto());
         if (umbral != null) {
             umbralActual.setText(String.valueOf(umbral.getValorMinimo()));
             nuevoUmbralCombo.setValue(umbral.getValorMinimo());
-            nuevoUmbral.setText("Nuevo umbral: " + (umbral.getValorMinimo()));
         } else {
             umbralActual.setText("No configurado");
             nuevoUmbralCombo.setValue(1);
-            nuevoUmbral.setText("1");
         }
     }
 
+    /**
+     * @brief Maneja el evento de guardar cambios en el umbral.
+     *
+     * Valida que el nuevo valor ingresado sea un número entero entre 1 y 100,
+     * guarda los cambios en la capa de negocio y actualiza la tabla en la ventana principal.
+     */
     @FXML
     private void handleGuardar() {
         try {
-            Integer nuevoValor = obtenerValorDesdeCombo();
+            String textoIngresado = nuevoUmbralCombo.getEditor().getText();
 
-            if (nuevoValor == null || nuevoValor < 1 || nuevoValor > 100) {
-                mostrarAlerta("Error", "El umbral debe ser un número entre 1 y 100");
+            if (textoIngresado == null || textoIngresado.trim().isEmpty()) {
+                ventana.mostrarError("Debe seleccionar o ingresar un valor para el nuevo umbral");
                 return;
             }
 
-            manejarEdicionUmbral(producto.getIdProducto(), nuevoValor);
+            Integer nuevoValor = obtenerValorDesdeCombo();
 
-            if (callbackActualizacion != null) {
-                callbackActualizacion.run();
+            if (nuevoValor == null) {
+                ventana.mostrarError("Debe ingresar un valor numérico para el nuevo umbral");
+                return;
             }
 
+            if (nuevoValor < 1) {
+                ventana.mostrarError("El umbral debe ser ≥ 1");
+                return;
+            }
+            if (nuevoValor > 100) {
+                ventana.mostrarError("El umbral no puede ser mayor a 100");
+                return;
+            }
+
+            servicioUmbrales.manejarEdicionUmbral(producto.getIdProducto(), nuevoValor);
+            ventana.mostrarMensajeExitoDeActualizacion();
+            ventana.actualizarUmbralEnTabla(producto.getIdProducto(), nuevoValor);
             cerrarVentana();
 
-        } catch (NumberFormatException e) {
-            mostrarAlerta("Error", "Ingrese un valor numérico válido");
+        } catch (Exception e) {
+            ventana.mostrarError(e.getMessage());
         }
     }
 
+    /**
+     * @brief Obtiene el valor numérico del ComboBox.
+     * @return Entero con el valor seleccionado o escrito, o `null` si no es válido.
+     */
     private Integer obtenerValorDesdeCombo() {
-        String texto = nuevoUmbralCombo.getEditor().getText();
-        if (texto != null && !texto.isEmpty()) {
-            return Integer.parseInt(texto);
+        try {
+            String texto = nuevoUmbralCombo.getEditor().getText();
+            return Integer.parseInt(texto.trim());
+        } catch (NumberFormatException e) {
+            return null;
         }
-        return nuevoUmbralCombo.getValue();
     }
 
-
-
-    private void mostrarMensajeExito(String mensaje) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Éxito");
-        alert.setHeaderText(null);
-        alert.setContentText(mensaje);
-        alert.showAndWait();
-    }
-
-    private void mostrarAlerta(String titulo, String mensaje) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle(titulo);
-        alert.setHeaderText(null);
-        alert.setContentText(mensaje);
-        alert.showAndWait();
-    }
-
+    /**
+     * @brief Maneja la acción de cancelar la edición del umbral.
+     */
     @FXML
     private void handleCancelar() {
         cerrarVentana();
     }
 
+    /**
+     * @brief Cierra la ventana modal actual.
+     */
     private void cerrarVentana() {
         ((Stage) nuevoUmbralCombo.getScene().getWindow()).close();
     }
-    /**
-     * FASE 2 - Edición de umbral (unifica iniciaEdicionUmbral y configurarUmbral)
-     */
-    public void manejarEdicionUmbral(Long idProducto, int nuevoMinimo) {
-        try {
-            if (nuevoMinimo < 1) {
-                throw new IllegalArgumentException("El umbral debe ser ≥ 1");
-            }
-
-            Umbral umbral = servicioUmbrales.findByProducto(idProducto);
-
-            if (umbral == null) {
-                servicioUmbrales.crearUmbral(idProducto, nuevoMinimo);
-                mostrarMensajeExito("Umbral creado: " + nuevoMinimo);
-            } else {
-                servicioUmbrales.actualizarUmbral(idProducto, nuevoMinimo);
-                mostrarMensajeExito("Umbral actualizado: " + nuevoMinimo);
-            }
-
-            ventana.actualizarUmbralEnTabla(idProducto, nuevoMinimo);
-
-        } catch (IllegalArgumentException | IllegalStateException e) {
-            mostrarAlerta("Error", e.getMessage());
-        } catch (Exception e) {
-            mostrarAlerta("Error técnico", e.getMessage());
-            e.printStackTrace();
-        }
-    }
-
-
 
     /**
-     * Cierra la ventana de configuración
+     * @brief Finaliza el flujo y oculta la ventana principal de configuración de umbrales.
      */
     public void termina() {
         ventana.setVisible(false);

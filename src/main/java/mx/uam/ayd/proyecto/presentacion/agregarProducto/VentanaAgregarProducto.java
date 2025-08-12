@@ -19,6 +19,10 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import javafx.scene.control.DatePicker;
+import javafx.scene.control.DateCell;
+import javafx.util.Callback;
+import java.time.LocalDate;
+
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -55,6 +59,22 @@ public class VentanaAgregarProducto{
 
     @FXML
     private DatePicker dtpFechaCaducidad;
+
+    @FXML
+    private void initialize() {
+        // Deshabilitar fechas anteriores a partir de una semana
+        dtpFechaCaducidad.setDayCellFactory(picker -> new DateCell() {
+            @Override
+            public void updateItem(LocalDate item, boolean empty) {
+                super.updateItem(item, empty);
+
+                if (item.isBefore(LocalDate.now().plusWeeks(1))) {
+                    setDisable(true);
+                    setStyle("-fx-background-color: #cccccc;");
+                }
+            }
+        });
+    }
 
     private boolean initialized = false;
 

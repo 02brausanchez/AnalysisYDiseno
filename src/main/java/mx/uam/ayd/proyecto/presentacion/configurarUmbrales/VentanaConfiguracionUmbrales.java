@@ -1,8 +1,14 @@
 package mx.uam.ayd.proyecto.presentacion.configurarUmbrales;
-import mx.uam.ayd.proyecto.presentacion.configurarUmbrales.ControlConfiguracionUmbrales;
+/**
+ * @file VentanaConfiguracionUmbrales.java
+ * @brief Ventana de configuración para gestionar los umbrales de stock de productos.
+ *
+ * Esta clase representa la interfaz gráfica que permite visualizar,
+ * configurar y modificar los umbrales de stock para diferentes productos.
+ * Utiliza JavaFX para la interfaz y se integra con el servicio de negocio
+ * @ref ServicioUmbrales.
+ */
 
-import javafx.scene.control.TableCell;
-import javafx.scene.control.TableColumn;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -10,148 +16,133 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
-
-import mx.uam.ayd.proyecto.negocio.modelo.*;
+import mx.uam.ayd.proyecto.negocio.ServicioUmbrales;
+import mx.uam.ayd.proyecto.negocio.modelo.Producto;
+import mx.uam.ayd.proyecto.negocio.modelo.Umbral;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.awt.*;
-import java.awt.Button;
-import java.awt.Label;
-//import java.awt.TextField;
-import javafx.scene.control.TextField;
-
-import java.awt.event.ActionEvent;
 import java.io.IOException;
-
-import mx.uam.ayd.proyecto.negocio.modelo.Umbral;
-import mx.uam.ayd.proyecto.negocio.ServicioUmbrales;
-import mx.uam.ayd.proyecto.negocio.modelo.Umbral;
-
-import javax.swing.*;
-import java.io.InputStream;
 import java.util.List;
 
+/**
+ * @class VentanaConfiguracionUmbrales
+ * @brief Ventana para la gestión visual de umbrales de productos.
+ *
+ * Esta clase controla la UI de configuración de umbrales, mostrando
+ * los productos, su stock, umbral y estado, así como la opción
+ * de editar la configuración.
+ */
 @Component
 public class VentanaConfiguracionUmbrales {
-    private Stage stage;
-    private ControlConfiguracionUmbrales control;
-    private Producto productoSeleccionado;
-    private ServicioUmbrales servicioUmbrales;
-    private VentanaConfiguracionUmbrales ventana;
 
-    public void ventanaConfiguracionUmbrales(VentanaConfiguracionUmbrales ventana){
-        this.ventana=ventana;
-    }
+    private Stage stage; ///< Ventana principal de la interfaz.
+    private ControlConfiguracionUmbrales control; ///< Controlador lógico para esta ventana.
+    private ServicioUmbrales servicioUmbrales; ///< Servicio de negocio para operaciones de umbrales.
+    private boolean initialized = false; ///< Indica si la interfaz fue inicializada.
 
+    // Componentes de la tabla
+    @FXML private TableView<Producto> tablaProductos; ///< Tabla que muestra los productos.
+    @FXML private TableColumn<Producto, String> columnaProducto; ///< Columna con el nombre del producto.
+    @FXML private TableColumn<Producto, Integer> columnaStock; ///< Columna con el stock disponible.
+    @FXML private TableColumn<Producto, Integer> columnaUmbral; ///< Columna con el umbral mínimo configurado.
+    @FXML private TableColumn<Producto, String> columnaEstado; ///< Columna con el estado del producto según su umbral.
+    @FXML private TableColumn<Producto, Void> columnaAccion; ///< Columna con el botón para editar umbrales.
+
+    /**
+     * @brief Constructor con inyección de dependencias.
+     * @param servicioUmbrales Servicio de negocio para gestión de umbrales.
+     */
     @Autowired
     public VentanaConfiguracionUmbrales(ServicioUmbrales servicioUmbrales) {
         this.servicioUmbrales = servicioUmbrales;
     }
 
-    public TableColumn<Producto, String> getColumnaEstado() {
-        return columnaEstado;
-    }
-
-    @FXML
-    private TableColumn<Producto, String> columnaEstado;
-
-    // Campos para la tabla de productos
-    @FXML
-    private TableView<Producto> tablaProductos;
-
-    @FXML
-    private TableColumn<Producto, String> columnaProducto;
-
-    @FXML
-    private TableColumn<Producto, Integer> columnaStock;
-
-    @FXML
-    private TableColumn<Producto, Integer> columnaUmbral;
-
-    @FXML
-    private TableColumn<Producto, Void> columnaAccion; // Columna con botón
-
-    // Campos para el panel de edición (del FXML compartido)
-    //@FXML
-    //private Label labelTitulo;
-
-    @FXML
-    private TextField editUmbralField;
-    @FXML
-    private TextField stockActualField;
-    @FXML
-    private TextField umbralActualField;
-    @FXML
-    private ComboBox<Integer> nuevoUmbralCombo;
-
-    private boolean initialized = false;
-
     /**
-     * Constructor without UI initialization
+     * @brief Inicializa la configuración de columnas de la tabla.
      */
-    public VentanaConfiguracionUmbrales(){/*Don't initialize JavaFX components in constructor*/}
-
-    /**
-     * Initialize UI components on the JavaFX application thread
-     */
-    private void initializeUI() {
-        if (initialized) {
-            return;
-        }
-
-        // Create UI only if we're on JavaFX thread
-        if (!Platform.isFxApplicationThread()) {
-            Platform.runLater(this::initializeUI);
-            return;
-        }
-
-        try {
-            // Load FXML
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ventana-menu-principal-umbrales.fxml"));
-            loader.setController(this);
-            Scene scene = new Scene(loader.load(), 850, 600);
-            stage = new Stage();
-            stage.setTitle("Gestion de stock");
-            stage.setScene(scene);
-
-            initialized = true;
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     @FXML
-    public void initialize(){
-        //Configuracion de columnas
+    public void initialize() {
         configurarColumnas();
     }
 
+    /**
+     * @brief Inicializa y carga la interfaz gráfica si no ha sido creada.
+     */
+    private void initializeUI() {
+        if (initialized) return;
+
+        Platform.runLater(() -> {
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ventana-menu-principal-umbrales.fxml"));
+                loader.setController(this);
+                stage = new Stage();
+                stage.setTitle("Gestión de Umbrales");
+                stage.setScene(new Scene(loader.load(), 850, 600));
+                initialized = true;
+            } catch (IOException e) {
+                throw new RuntimeException("Error al inicializar la ventana", e);
+            }
+        });
+    }
+
+    /**
+     * @brief Configura las columnas de la tabla de productos.
+     *
+     * Establece los valores que mostrará cada columna, así como el formato de presentación.
+     */
     private void configurarColumnas() {
-        // Columna Producto
+        // Configuración de columnaProducto
         columnaProducto.setCellValueFactory(new PropertyValueFactory<>("nombre"));
 
-        // Columna Stock
-        columnaStock.setCellValueFactory(new PropertyValueFactory<>("cantidadStock"));
+        // Configuración de columnaStock
+        columnaStock.setCellValueFactory(cellData ->
+                new SimpleIntegerProperty(cellData.getValue().getCantidadStock()).asObject());
 
-        // Columna Umbral (con valor dinámico)
-        columnaUmbral.setCellValueFactory(cellData -> {
-            Producto producto = cellData.getValue();
-            Umbral umbral = servicioUmbrales.findByProducto(producto.getIdProducto());
-            return new SimpleIntegerProperty(umbral != null ? umbral.getValorMinimo() : 1).asObject();
+        columnaStock.setCellFactory(col -> new TableCell<>() {
+            @Override
+            protected void updateItem(Integer cantidad, boolean empty) {
+                super.updateItem(cantidad, empty);
+                setText(empty || cantidad == null ? null : cantidad + " unidades");
+            }
         });
 
-        // Columna Estado (con estilo condicional)
+        // Configuración de columnaUmbral
+        columnaUmbral.setCellValueFactory(cellData -> {
+            Umbral umbral = servicioUmbrales.findById(cellData.getValue().getIdProducto());
+            int valor = (umbral != null) ? umbral.getValorMinimo() : 0;
+            return new SimpleIntegerProperty(valor).asObject();
+        });
+
+        columnaUmbral.setCellFactory(col -> new TableCell<>() {
+            @Override
+            protected void updateItem(Integer valor, boolean empty) {
+                super.updateItem(valor, empty);
+                if (empty || valor == null) {
+                    setText(null);
+                } else {
+                    int idx = getIndex();
+                    if (idx >= 0 && idx < getTableView().getItems().size()) {
+                        Producto producto = getTableView().getItems().get(idx);
+                        Umbral umbral = servicioUmbrales.findById(producto.getIdProducto());
+                        if (umbral == null) {
+                            setText("No configurado");
+                            return;
+                        }
+                    }
+                    setText(valor + " unidades");
+                }
+            }
+        });
+
+        // Configuración de columnaEstado
         columnaEstado.setCellValueFactory(cellData -> {
             Producto producto = cellData.getValue();
-            Umbral umbral = servicioUmbrales.findByProducto(producto.getIdProducto());
+            Umbral umbral = servicioUmbrales.findById(producto.getIdProducto());
 
             if (umbral == null) {
                 return new SimpleStringProperty("No configurado");
@@ -162,197 +153,134 @@ public class VentanaConfiguracionUmbrales {
             }
         });
 
-        columnaEstado.setCellFactory(column -> new TableCell<Producto, String>() {
+        columnaEstado.setCellFactory(column -> new TableCell<>() {
             @Override
             protected void updateItem(String estado, boolean empty) {
                 super.updateItem(estado, empty);
-
                 if (empty || estado == null) {
                     setText(null);
                     setStyle("");
                 } else {
                     setText(estado);
-                    if (estado.equals("BAJO STOCK")) {
-                        setStyle("-fx-text-fill: red; -fx-font-weight: bold;");
-                    } else {
-                        setStyle("-fx-text-fill: green;");
-                    }
+                    setStyle(estado.equals("BAJO STOCK") ?
+                            "-fx-text-fill: red; -fx-font-weight: bold;" :
+                            "-fx-text-fill: green;");
                 }
             }
         });
 
-        // Columna Acción - Versión corregida
-        columnaAccion.setCellFactory(param -> new TableCell<Producto, Void>() {
-            private final javafx.scene.control.Button btnEditar = new javafx.scene.control.Button("Editar");
-
+        // Configuración de columnaAccion
+        columnaAccion.setCellFactory(param -> new TableCell<>() {
+            private final Button btnEditar = new Button("Editar");
             {
                 btnEditar.setOnAction(event -> {
                     Producto producto = getTableView().getItems().get(getIndex());
-                    abrirVentanaEdicionUmbral(producto);
+                    control.iniciarEdicionDeUmbral(producto.getIdProducto(), producto.getCantidadStock());
                 });
-
                 btnEditar.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white;");
             }
-
             @Override
             protected void updateItem(Void item, boolean empty) {
                 super.updateItem(item, empty);
-                if (empty) {
-                    setGraphic(null);
-                } else {
-                    setGraphic(btnEditar);
-                }
+                setGraphic(empty ? null : btnEditar);
             }
         });
     }
 
-    /*
-     * Método para abrir la ventana de edición de umbral
+    /**
+     * @brief Asigna el controlador lógico de configuración de umbrales.
+     * @param control Instancia de @ref ControlConfiguracionUmbrales.
      */
-    private void abrirVentanaEdicionUmbral(Producto producto) {
-        try {
-            // 1. Crear el controlador de configuración de umbrales
-            ControlConfiguracionUmbrales controlador = new ControlConfiguracionUmbrales();
-
-            // 2. Inyectar dependencias manualmente (servicio y callback)
-            controlador.setServicioUmbrales(servicioUmbrales);
-            controlador.setCallbackActualizacion(() -> tablaProductos.refresh());
-
-            // 3. Configurar el FXMLLoader y establecer el controlador
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ventana-editar-umbral.fxml"));
-            loader.setController(controlador);
-
-            // 4. Cargar la vista (raíz)
-            Parent root = loader.load();
-
-            // 5. Pasar el producto al controlador para cargar datos en la vista
-            controlador.setProducto(producto);
-
-            // 6. Crear la nueva ventana modal para editar umbral
-            Stage stage = new Stage();
-            stage.setTitle("Editar Umbral - " + producto.getNombre());
-            stage.setScene(new Scene(root, 850, 600));
-            stage.initModality(Modality.APPLICATION_MODAL);
-
-            // 7. Mostrar ventana y esperar cierre
-            stage.showAndWait();
-
-            // Opcional: refrescar la tabla luego de cerrar ventana
-            tablaProductos.refresh();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            muestraDialogoConMensaje("Error al abrir ventana de edición:\n" + e.getMessage());
-
-            System.err.println("Ruta intentada: " + getClass().getResource("/fxml/ventana-editar-umbral.fxml"));
-            if (e.getCause() != null) {
-                System.err.println("Causa: " + e.getCause().getMessage());
-            }
-        }
+    public void setControlConfiguracionUmbrales(ControlConfiguracionUmbrales control) {
+        this.control = control;
     }
 
-    /*
-     * Establece el controlador asociado a esta ventana
-     *
-     * @param control El controlador asociado
-     */
-    public void setControlConfiguracionUmbrales(ControlConfiguracionUmbrales control) {this.control = control;}
-
-    /*
-       Muestra la ventana y establece los datos
-       @param umbral la lista de productos disponibles
+    /**
+     * @brief Muestra la ventana con la lista de productos.
+     * @param productos Lista de productos a mostrar.
      */
     public void muestra(List<Producto> productos) {
-        if (!Platform.isFxApplicationThread()) {
-            Platform.runLater(() -> this.muestra(productos));
-            return;
-        }
-        initializeUI();
-
-        ObservableList<Producto> data = FXCollections.observableArrayList(productos);
-        tablaProductos.setItems(data);
-
-        stage.show();
+        Platform.runLater(() -> {
+            if (!initialized) {
+                initializeUI();
+            }
+            ObservableList<Producto> data = FXCollections.observableArrayList(productos);
+            if (tablaProductos != null) {
+                tablaProductos.setItems(data);
+                stage.show();
+            } else {
+                System.err.println("Error: tablaProductos no fue inicializada");
+            }
+        });
     }
 
-    /*
-        Muestra un dialogo con un mensaje
-        @param mensaje El mensaje a mostrar
+    /**
+     * @brief Actualiza en la tabla el umbral de un producto específico.
+     * @param idProducto ID del producto.
+     * @param nuevoMinimo Nuevo valor mínimo del umbral.
      */
-    public void muestraDialogoConMensaje(String mensaje) {
+    public void actualizarUmbralEnTabla(Long idProducto, int nuevoMinimo) {
         Platform.runLater(() -> {
-            Alert alert = new Alert(AlertType.INFORMATION);
-            alert.setTitle("Configuración de Umbrales");
+            tablaProductos.getItems().stream()
+                    .filter(p -> p.getIdProducto().equals(idProducto))
+                    .findFirst()
+                    .ifPresent(p -> {
+                        if (p.getUmbral() == null) {
+                            Umbral nuevoUmbral = new Umbral();
+                            nuevoUmbral.setValorMinimo(nuevoMinimo);
+                            nuevoUmbral.setProducto(p);
+                            p.setUmbral(nuevoUmbral);
+                        } else {
+                            p.getUmbral().setValorMinimo(nuevoMinimo);
+                        }
+                        tablaProductos.refresh();
+                    });
+        });
+    }
+
+    /// Muestra un mensaje de éxito tras actualizar un umbral.
+    public void mostrarMensajeExitoDeActualizacion() {
+        mostrarAlerta(AlertType.INFORMATION, "Éxito", "Umbral actualizado correctamente");
+    }
+
+    /// Muestra un mensaje de éxito tras crear un nuevo umbral.
+    public void mostrarMensajeDeUmbralCreado() {
+        mostrarAlerta(AlertType.INFORMATION, "Éxito", "Nuevo umbral creado exitosamente");
+    }
+
+    /**
+     * @brief Muestra un mensaje de error genérico.
+     * @param mensaje Texto del error.
+     */
+    public void mostrarError(String mensaje) {
+        mostrarAlerta(AlertType.ERROR, "Error", mensaje);
+    }
+
+    /**
+     * @brief Muestra una alerta en pantalla.
+     * @param tipo Tipo de alerta (INFORMATION, ERROR, etc.).
+     * @param titulo Título de la alerta.
+     * @param mensaje Contenido del mensaje.
+     */
+    private void mostrarAlerta(AlertType tipo, String titulo, String mensaje) {
+        Platform.runLater(() -> {
+            Alert alert = new Alert(tipo);
+            alert.setTitle(titulo);
             alert.setHeaderText(null);
             alert.setContentText(mensaje);
             alert.showAndWait();
         });
     }
 
-    public void actualizarUmbralEnTabla(Long idProducto, int nuevoMinimo) {
-        tablaProductos.getItems().stream()
-                .filter(p -> p.getIdProducto().equals(idProducto))
-                .findFirst()
-                .ifPresent(p -> {
-                    if (p.getUmbral() == null) {
-                        // Versión segura:
-                        Umbral nuevoUmbral = new Umbral();
-                        nuevoUmbral.setValorMinimo(nuevoMinimo);
-                        nuevoUmbral.setProducto(p); // ¡Importante para la relación!
-                        p.setUmbral(nuevoUmbral);
-                    } else {
-                        p.getUmbral().setValorMinimo(nuevoMinimo);
-                    }
-                    tablaProductos.refresh();
-                });
-    }
-
-    /*
-        Oculta la ventana
+    /**
+     * @brief Cambia la visibilidad de la ventana.
+     * @param visible true para mostrar la ventana, false para ocultarla.
      */
     public void setVisible(boolean visible) {
-        if (!Platform.isFxApplicationThread()) {
-            Platform.runLater(() -> this.setVisible(visible));
-            return;
-        }
-
-        if (!initialized) {
-            if (visible) {
-                initializeUI();
-            } else {
-                return;
-            }
-        }
-
-        if (visible) {
-            stage.show();
-        } else {
-            stage.hide();
-        }
+        Platform.runLater(() -> {
+            if (!initialized) initializeUI();
+            if (visible) stage.show(); else stage.hide();
+        });
     }
-
-
-    private void actualizarPanelEdicion(Producto producto) {
-        this.productoSeleccionado = producto;
-        stockActualField.setText(String.valueOf(producto.getCantidadStock()));
-
-        if (producto.getUmbral() != null) {
-            umbralActualField.setText(String.valueOf(producto.getUmbral().getValorMinimo()));
-            editUmbralField.setText(String.valueOf(producto.getUmbral().getValorMinimo()));
-            nuevoUmbralCombo.setValue(producto.getUmbral().getValorMinimo());
-        } else {
-            umbralActualField.setText("No configurado");
-            editUmbralField.setText("");
-            nuevoUmbralCombo.setValue(1);
-        }
-    }
-
-    // FXML Event Handlers
-
-    @FXML
-    private void handleCancelar(ActionEvent event) {
-        control.termina();
-    }
-
 }
 

@@ -6,7 +6,7 @@
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity"
             xmlns="http://javafx.com/javafx/17.0.12"
             xmlns:fx="http://javafx.com/fxml/1"
-    >
+>
     <TableView fx:id="tablaProductos" layoutX="18.0" layoutY="83.0" prefHeight="200.0" prefWidth="377.0">
         <columns>
             <TableColumn fx:id="columnaProducto" prefWidth="75.0" text="Producto" />

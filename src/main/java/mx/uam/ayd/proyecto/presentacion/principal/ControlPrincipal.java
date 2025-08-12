@@ -2,6 +2,7 @@ package mx.uam.ayd.proyecto.presentacion.principal;
 
 import jakarta.annotation.PostConstruct;
 
+import mx.uam.ayd.proyecto.presentacion.Inventario.Controlinventario;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -12,10 +13,9 @@ import mx.uam.ayd.proyecto.presentacion.configurarUmbrales.ControlConfiguracionU
 import mx.uam.ayd.proyecto.presentacion.alertas.ControlAlerta;
 import mx.uam.ayd.proyecto.presentacion.alertas.VentanaAlerta;
 
-
 /**
  * Esta clase lleva el flujo de control de la ventana principal
- * 
+ *
  * @author humbertocervantes
  *
  */
@@ -28,9 +28,8 @@ public class ControlPrincipal {
 	private final ControlConfiguracionUmbrales controlConfiguracionUmbrales;
 	private final ControlAlerta controlAlerta;
 	private final VentanaAlerta ventanaAlerta;
+	private final Controlinventario controlinventario;
 	private final VentanaPrincipal ventana;
-
-
 
 	@Autowired
 	public ControlPrincipal(
@@ -38,18 +37,21 @@ public class ControlPrincipal {
 			ControlListarUsuarios controlListarUsuarios,
 			ControlListarGrupos controlListarGrupos,
 			ControlConfiguracionUmbrales controlConfiguracionUmbrales,
-			VentanaPrincipal ventana,
 			ControlAlerta controlAlerta,
-			VentanaAlerta ventanaAlerta){
+			VentanaAlerta ventanaAlerta,
+			Controlinventario controlinventario,
+			VentanaPrincipal ventana) {
+
 		this.controlAgregarUsuario = controlAgregarUsuario;
 		this.controlListarUsuarios = controlListarUsuarios;
 		this.controlListarGrupos = controlListarGrupos;
 		this.controlConfiguracionUmbrales = controlConfiguracionUmbrales;
-		this.ventana = ventana;
 		this.controlAlerta = controlAlerta;
 		this.ventanaAlerta = ventanaAlerta;
+		this.controlinventario = controlinventario;
+		this.ventana = ventana;
 	}
-	
+
 	/**
 	 * Método que se ejecuta después de la construcción del bean
 	 * y realiza la conexión bidireccional entre el control principal y la ventana principal
@@ -58,32 +60,41 @@ public class ControlPrincipal {
 	public void init() {
 		ventana.setControlPrincipal(this);
 	}
-	
+
 	/**
 	 * Inicia el flujo de control de la ventana principal
-	 * 
+	 *
 	 */
 	public void inicia() {
 		ventana.muestra();
 	}
 
 	/*
-		Metodo que arranca la historia de usuario "configurar umbrales"
-	 */
-	public void configurarUmbrales() {controlConfiguracionUmbrales.inicia();}
+        Metodo que arranca la historia de usuario "configurar umbrales"
+     */
+	public void configurarUmbrales() {
+		controlConfiguracionUmbrales.inicia();
+	}
 
+	/*
+	 * Metodo que arranca la historia de usuario "Listar prodcutos "
+	 *
+	 */
+	public void Inventario() {
+		controlinventario.inicia();
+	}
 
 	/**
 	 * Método que arranca la historia de usuario "agregar usuario"
-	 * 
+	 *
 	 */
 	public void agregarUsuario() {
 		controlAgregarUsuario.inicia();
 	}
-	
+
 	/**
 	 * Método que arranca la historia de usuario "listar usuarios"
-	 * 
+	 *
 	 */
 	public void listarUsuarios() {
 		controlListarUsuarios.inicia();
@@ -91,12 +102,11 @@ public class ControlPrincipal {
 
 	/**
 	 * Método que arranca la historia de usuario "listar grupos"
-	 * 
+	 *
 	 */
 	public void listarGrupos() {
 		controlListarGrupos.inicia();
 	}
-
 
 	/**
 	 * Método para mostrar ventana de alertas

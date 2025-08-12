@@ -12,32 +12,37 @@
     </top>
     
     <center>
-        <TableView fx:id="tableGrupos" VBox.vgrow="ALWAYS">
+        <TableView fx:id="tableProducto" VBox.vgrow="ALWAYS">
             <columns>
-                <TableColumn fx:id="idColumn" prefWidth="60.99999922513962" text="ID" />
-                <TableColumn fx:id="nombreColumn" prefWidth="99.00000381469727" text="Nombre" />
-                <TableColumn fx:id="usuariosColumn" prefWidth="150.99998474121094" text="Fecha de caducidad" />
-            <TableColumn fx:id="usuariosColumn1" prefWidth="83.39996337890625" text="Precio" />
-            <TableColumn fx:id="usuariosColumn11" prefWidth="88.60003662109375" text="Stock" />
+                <TableColumn fx:id="idColumn" prefWidth="77.60000610351562" text="ID" />
+                <TableColumn fx:id="nombreColumn" prefWidth="153.0" text="Nombre" />
+                <TableColumn fx:id="fechaCaducidadColumn" prefWidth="121.4000244140625" text="Fecha de caducidad" />
+                <TableColumn fx:id="precioColumn" prefWidth="121.4000244140625" text="Precio" />
+                <TableColumn fx:id="stockColumn" prefWidth="110.39996337890625" text="Stock" />
             </columns>
         </TableView>
     </center>
-    
+
     <bottom>
         <VBox spacing="10" style="-fx-padding: 10px;">
          <children>
-            <Button layoutX="20.0" layoutY="20.0" onAction="#handleCerrar" style="-fx-min-width: 80px; -fx-min-height: 25px;" text="Cerrar" />
+            <HBox prefHeight="100.0" prefWidth="200.0">
+               <children>
+                  <Label prefHeight="28.0" prefWidth="136.0" text="ID de producto a eliminar" />
+                  <TextField fx:id="campoIdProducto" prefHeight="26.0" prefWidth="241.0" />
+                     <Button onAction="#handleEliminar" prefHeight="26.0" prefWidth="97.0" style="-fx-min-width: 80px; -fx-min-height: 25px;" text="Eliminar" />
+                  <Button onAction="#handleCerrar" prefHeight="26.0" prefWidth="103.0" style="-fx-min-width: 80px; -fx-min-height: 25px;" text="Cerrar" />
+               </children>
+            </HBox>
          </children>
         </VBox>
     </bottom>
    <right>
       <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
          <children>
-            <Button onAction="#handleCerrar" style="-fx-min-width: 80px; -fx-min-height: 25px;" text="Modificar" />
-               <Button onAction="#handleCerrar" style="-fx-min-width: 80px; -fx-min-height: 25px;" text="Eliminar" />
-            <Button layoutX="10.0" layoutY="36.0" onAction="#handleCerrar" style="-fx-min-width: 80px; -fx-min-height: 25px;" text="Agregar" />
-         </children>
-      </VBox>
+             <Button onAction="#handleAgregar" prefHeight="30.0" prefWidth="85.0" style="-fx-min-width: 80px; -fx-min-height: 25px;" text="Agregar" />
+            <Button mnemonicParsing="false" prefHeight="30.0" prefWidth="85.0" text="Modificar" />
+         </children></VBox>
    </right>
     
 </BorderPane>

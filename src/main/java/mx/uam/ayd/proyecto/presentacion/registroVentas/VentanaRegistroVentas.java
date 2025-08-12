@@ -29,6 +29,12 @@ import mx.uam.ayd.proyecto.negocio.modelo.Venta;
 import mx.uam.ayd.proyecto.negocio.modelo.DetalleVenta;
 import mx.uam.ayd.proyecto.negocio.modelo.Producto;
 
+/**
+ * Controla la ventana para registrar ventas.
+ *
+ * Permite mostrar la ventana con productos disponibles, agregar productos a la venta,
+ * finalizar o cancelar la venta.
+ */
 @Component
 public class VentanaRegistroVentas{
     private Stage stage;
@@ -86,7 +92,7 @@ public class VentanaRegistroVentas{
             // Load FXML
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ventana-registro-ventas.fxml"));
             loader.setController(this);
-            Scene scene = new Scene(loader.load(), 300, 220);
+            Scene scene = new Scene(loader.load(), 500, 420);
             stage.setScene(scene);
 
             txtCantidad.textProperty().addListener((obs, oldValue, newValue) -> {
@@ -129,10 +135,26 @@ public class VentanaRegistroVentas{
         }
     }
 
+
+    /**
+     * Establece el controlador que maneja la lógica de ventas.
+     *
+     * @param control instancia de ControlRegistroVentas
+     */
     public void setControlRegistroVentas(ControlRegistroVentas control) {
         this.control = control;
     }
 
+    /**
+     * Muestra la ventana para registrar ventas.
+     *
+     * Inicializa la interfaz si no está inicializada, limpia y carga la lista de productos
+     * disponibles, establece la venta actual y muestra la ventana.
+     * Se asegura que la operación se ejecute en el hilo de JavaFX.
+     *
+     * @param productos lista de productos disponibles para la venta
+     * @param venta     instancia actual de la venta en curso
+     */
     public void muestra(List<Producto> productos, Venta venta) {
         if (!Platform.isFxApplicationThread()) {
             Platform.runLater(() -> this.muestra(productos, venta));
@@ -141,12 +163,16 @@ public class VentanaRegistroVentas{
 
         initializeUI();
 
+        // Limpia cantidad y lista previa
         txtCantidad.setText("");
         cmbProductos.getItems().clear();
+
+        // Agrega productos al ComboBox
         for(Producto producto : productos) {
             cmbProductos.getItems().add(producto);
         }
 
+        // Selecciona el primer producto si la lista no está vacía
         if(!cmbProductos.getItems().isEmpty()) {
             cmbProductos.setValue(cmbProductos.getItems().get(0));
         }
@@ -156,6 +182,12 @@ public class VentanaRegistroVentas{
         stage.show();
     }
 
+    /**
+     * Muestra un diálogo informativo con el mensaje proporcionado.
+     * Se asegura que la llamada se realice en el hilo de JavaFX.
+     *
+     * @param mensaje texto que se mostrará en el diálogo
+     */
     public void muestraDialogoConMensaje(String mensaje) {
         if (!Platform.isFxApplicationThread()) {
             Platform.runLater(() -> this.muestraDialogoConMensaje(mensaje));
@@ -169,6 +201,14 @@ public class VentanaRegistroVentas{
         alert.showAndWait();
     }
 
+    /**
+     * Controla la visibilidad de la ventana.
+     *
+     * Si la ventana no ha sido inicializada, la inicializa si se va a mostrar.
+     * Ejecuta la operación en el hilo de JavaFX.
+     *
+     * @param visible true para mostrar la ventana, false para ocultarla
+     */
     public void setVisible(boolean visible) {
         if (!Platform.isFxApplicationThread()) {
             Platform.runLater(() -> this.setVisible(visible));
@@ -190,37 +230,73 @@ public class VentanaRegistroVentas{
         }
     }
 
+    /**
+     * Evento asociado al botón "Agregar", agrega los productos a la tabla
+     *
+     * Valida que los campos necesarios no sean nulos y agrega un detalle de venta a la lista.
+     * Actualiza la tabla con los detalles y calcula el total acumulado.
+     */
     @FXML
     private void handleAgregar() {
         if(cmbProductos == null || txtCantidad == null) {
             muestraDialogoConMensaje("Llene todos los campos");
-        }else {
+        } else {
             double montoTotal = 0;
-            detallesVenta.add(control.crearDetalleVenta(cmbProductos.getValue(), Integer.parseInt(txtCantidad.getText()), detallesVenta));
+
+            // Crea un detalle de venta y lo agrega a la lista
+            detallesVenta.add(control.crearDetalleVenta(
+                    cmbProductos.getValue(),
+                    Integer.parseInt(txtCantidad.getText()),
+                    detallesVenta));
+
+            // Actualiza la tabla de venta con la lista actualizada
             tableVenta.setItems(detallesVenta);
+
+            // Suma el subtotal de cada detalle para obtener el monto total
             for(DetalleVenta detalleVenta : detallesVenta){
-                montoTotal = montoTotal + detalleVenta.getSubtotal();
+                montoTotal += detalleVenta.getSubtotal();
             }
+
+            // Limpia la cantidad para un nuevo ingreso
             txtCantidad.clear();
+
+            // Actualiza la etiqueta con el total acumulado
             lblTotal.setText("Total: " + montoTotal);
         }
     }
 
+    /**
+     * Evento asociado al botón "Finalizar".
+     *
+     * Si no hay detalles de venta, cancela la venta.
+     * Si hay detalles, guarda la venta, los detalles, actualiza stock,
+     * genera el documento y termina el proceso mostrando mensaje de éxito.
+     * Finalmente limpia la lista de detalles.
+     */
     @FXML
     private void handleFinalizar() {
         if(detallesVenta == null) {
             String mensaje = "Venta cancelada";
             control.termina(mensaje);
+            return;
         }
+
         control.guardarVenta(detallesVenta);
         control.guardarDetallesVenta(detallesVenta);
         control.actualizarStock(detallesVenta);
         control.crearDocumento(detallesVenta);
-        String mensaje = "Se creo la venta exitosamente";
+
+        String mensaje = "Se creó la venta exitosamente";
         control.termina(mensaje);
+
         detallesVenta.clear();
     }
 
+    /**
+     * Evento asociado al botón "Cancelar", se cancela la venta, no guarda nada en la Base de datos
+     *
+     * Limpia la lista de detalles y termina la operación indicando que la venta fue cancelada.
+     */
     @FXML
     private void handleCancelar() {
         String mensaje = "Venta cancelada";

@@ -45,7 +45,7 @@ public class Umbral {
      * Obtiene el identificador único del umbral.
      * @return ID del umbral
      */
-    public long getIdUmbral() {
+    public Long getIdUmbral() {
         return idUmbral;
     }
 
@@ -53,7 +53,7 @@ public class Umbral {
      * Asigna un identificador único al umbral.
      * @param idUmbral ID a asignar
      */
-    public void setIdUmbral(long idUmbral) {
+    public void setIdUmbral(Long idUmbral) {
         this.idUmbral = idUmbral;
     }
 
@@ -83,10 +83,14 @@ public class Umbral {
 
     /**
      * Asocia un producto al umbral.
+     * Además, sincroniza la relación bidireccional
      * @param producto producto a asociar
      */
     public void setProducto(Producto producto) {
         this.producto = producto;
+        if (producto != null && producto.getUmbral() != this) {
+            producto.setUmbral(this);
+        }
     }
 
     /**
@@ -117,7 +121,7 @@ public class Umbral {
         if (obj == null || getClass() != obj.getClass())
             return false;
         Umbral other = (Umbral) obj;
-        return idUmbral == other.idUmbral;
+        return idUmbral != null && idUmbral.equals(other.idUmbral);
     }
 
     /**
@@ -126,7 +130,7 @@ public class Umbral {
      */
     @Override
     public int hashCode() {
-        return (int) (31 * idUmbral);
+        return idUmbral != null ? idUmbral.hashCode() : 0;
     }
 
     /**

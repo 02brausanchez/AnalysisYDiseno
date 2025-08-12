@@ -3,27 +3,20 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" 
-      spacing="10" style="-fx-padding: 15px;">
-    
-    <Label text="Mi Aplicación" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
-    
-    <Button text="Agregar usuario" onAction="#handleAgregarUsuario" 
-            style="-fx-min-width: 200px; -fx-min-height: 30px;"/>
-    
-    <Button text="Listar usuarios" onAction="#handleListarUsuarios" 
-            style="-fx-min-width: 200px; -fx-min-height: 30px;"/>
-    
-    <Button text="Listar grupos" onAction="#handleListarGrupos" 
-            style="-fx-min-width: 200px; -fx-min-height: 30px;"/>
+<VBox spacing="10" style="-fx-padding: 15px;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1">
 
-    <Button text="Configurar umbrales" onAction="#handleConfigurarUmbrales"
-            style="-fx-min-width: 200px; -fx-min-height: 30px;"/>
+    <Label style="-fx-font-size: 18px; -fx-font-weight: bold;" text="Mi Aplicación" />
 
     <Button text="Inventario" onAction="#handleInventario"
             style="-fx-min-width: 200px; -fx-min-height: 30px;"/>
 
     <Button text="Alertas" onAction="#handleMostrarAlertas"
             style="-fx-min-width: 200px; -fx-min-height: 30px;"/>
-</VBox>
 
+    <Button onAction="#handleRegistrarVenta" style="-fx-min-width: 200px; -fx-min-height: 30px;" text="Registrar venta" />
+
+    <Button onAction="#handleGenerarReporte" style="-fx-min-width: 200px; -fx-min-height: 30px;" text="Generar reporte" />
+
+    <Button onAction="#handleConfigurarUmbrales" style="-fx-min-width: 200px; -fx-min-height: 30px;" text="Configurar Umbrales" />
+
+</VBox>

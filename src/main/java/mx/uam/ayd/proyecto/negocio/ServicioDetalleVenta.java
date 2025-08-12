@@ -14,8 +14,11 @@ import mx.uam.ayd.proyecto.negocio.modelo.Venta;
 import mx.uam.ayd.proyecto.negocio.modelo.DetalleVenta;
 import mx.uam.ayd.proyecto.negocio.modelo.Producto;
 
+/**
+ * Servicio para gestionar la creacion de los detalle de venta.
+ */
 @Service
-public class ServicioDetalleVenta{
+public class ServicioDetalleVenta {
     private static final Logger log = LoggerFactory.getLogger(ServicioDetalleVenta.class);
 
     private final VentaRepository ventaRepository;
@@ -23,13 +26,34 @@ public class ServicioDetalleVenta{
     private final ProductoRepository productoRepository;
     private double subtotal;
 
+    /**
+     * Constructor con inyección de dependencias para los repositorios usados.
+     *
+     * @param ventaRepository repositorio para gestionar ventas
+     * @param detalleVentaRepository repositorio para gestionar detalles de venta
+     * @param productoRepository repositorio para gestionar productos
+     */
     @Autowired
-    public ServicioDetalleVenta(VentaRepository ventaRepository, DetalleVentaRepository detalleVentaRepository, ProductoRepository productoRepository) {
+    public ServicioDetalleVenta(VentaRepository ventaRepository,
+                                DetalleVentaRepository detalleVentaRepository,
+                                ProductoRepository productoRepository) {
         this.ventaRepository = ventaRepository;
         this.detalleVentaRepository = detalleVentaRepository;
         this.productoRepository = productoRepository;
     }
 
+    /**
+     * Crea un nuevo objeto DetalleVenta validando que el producto, cantidad y venta sean correctos,
+     * y que no exista ya el producto en la lista de detalles.
+     *
+     * @param producto producto que se va a vender
+     * @param cantidadVendida cantidad del producto que se vende
+     * @param venta la venta a la que pertenece este detalle
+     * @param detallesVenta lista actual de detalles de venta para evitar duplicados
+     * @return un nuevo objeto DetalleVenta con los datos proporcionados y el subtotal calculado
+     * @throws IllegalArgumentException si producto o venta son nulos, o cantidad es <= 0
+     * @throws IllegalStateException si el producto ya está en la lista o la cantidad supera el stock disponible
+     */
     public DetalleVenta newDetalleVenta(Producto producto, int cantidadVendida, Venta venta, List<DetalleVenta> detallesVenta){
         if(producto == null) {
             throw new IllegalArgumentException("El producto no puede ser nulo");

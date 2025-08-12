@@ -22,7 +22,13 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.time.LocalDate;
 
-
+/**
+ * Clase encargada de la ventana para mostrar reportes generados.
+ *
+ * Muestra los datos de ventas ya procesados en forma de tabla o gráfica,
+ * según la selección del usuario. Se asegura de operar sobre el hilo de JavaFX
+ * para la manipulación de la interfaz gráfica.
+ */
 @Component
 public class VentanaReporteGenerado {
     private Stage stage;
@@ -49,12 +55,17 @@ public class VentanaReporteGenerado {
         // Don't initialize JavaFX components in constructor
     }
 
+    /**
+     * Inicializa la interfaz gráfica cargando el archivo FXML y configurando
+     * la ventana y las columnas de la tabla.
+     *
+     * Este método se ejecuta únicamente una vez y se asegura de hacerlo en el hilo JavaFX.
+     */
     private void initializeUI() {
         if (initialized) {
-            return;
+            return; // Ya inicializado, no hacer nada
         }
 
-        // Create UI only if we're on JavaFX thread
         if (!Platform.isFxApplicationThread()) {
             Platform.runLater(this::initializeUI);
             return;
@@ -68,9 +79,10 @@ public class VentanaReporteGenerado {
             loader.setController(this);
             Parent root = loader.load();
 
-            Scene scene = new Scene(root, 600, 400); // pon un tamaño más amplio
+            Scene scene = new Scene(root, 600, 400);
             stage.setScene(scene);
 
+            // Configura las columnas de la tabla con las propiedades del DTO
             columnFecha.setCellValueFactory(new PropertyValueFactory<>("fecha"));
             columnProducto.setCellValueFactory(new PropertyValueFactory<>("nombreProducto"));
             columnTipo.setCellValueFactory(cellData ->
@@ -84,64 +96,84 @@ public class VentanaReporteGenerado {
         }
     }
 
+    /**
+     * Establece el controlador lógico que maneja las acciones del reporte generado.
+     *
+     * @param control instancia de ControlReporteGenerado
+     */
     public void setControlReporteGenerado(ControlReporteGenerado control) {
         this.control = control;
     }
 
+    /**
+     * Muestra la ventana con el reporte de ventas recibido.
+     *
+     * Dependiendo del tipo de reporte, muestra los datos en una tabla o en un gráfico de barras.
+     * Se asegura de ejecutar en el hilo JavaFX.
+     *
+     * @param ventas lista con los datos de ventas para mostrar
+     * @param tipoReporte tipo de reporte ("Grafica" o cualquier otro valor para tabla)
+     * @param periodicidad periodicidad del reporte ("Diario", "Mensual", etc.)
+     */
     public void muestra(List<ReporteVentaDTO> ventas, String tipoReporte, String periodicidad) {
         if (!Platform.isFxApplicationThread()) {
-            Platform.runLater(() -> this.muestra(ventas, tipoReporte,  periodicidad));
+            Platform.runLater(() -> this.muestra(ventas, tipoReporte, periodicidad));
             return;
         }
 
         initializeUI();
+
         barChartVentas.getData().clear();
         barChartVentas.setVisible(false);
         tblVentas.setVisible(false);
         this.ventas2 = FXCollections.observableArrayList(ventas);
 
         if ("Grafica".equalsIgnoreCase(tipoReporte)) {
-            // Limpiar datos anteriores
-            barChartVentas.getData().clear();
-
+            // Preparar y mostrar gráfica de barras
             XYChart.Series<String, Number> series = new XYChart.Series<>();
             series.setName("Ventas");
-            if("Diario".equals(periodicidad)) {
-                for (ReporteVentaDTO dto : ventas) {
-                    series.getData().add(new XYChart.Data<>(dto.getNombreProducto() + "  " + dto.getFecha().toString(), dto.getCantidadVendida()));
-                }
-            }
-            else{
-                for (ReporteVentaDTO dto : ventas) {
-                    series.getData().add(new XYChart.Data<>(dto.getNombreProducto() + "  " + dto.getFecha().toString(), dto.getCantidadVendida()));
-                }
+
+            for (ReporteVentaDTO dto : ventas) {
+                String label = dto.getNombreProducto() + "  " + dto.getFecha().toString();
+                series.getData().add(new XYChart.Data<>(label, dto.getCantidadVendida()));
             }
 
             barChartVentas.getData().add(series);
             barChartVentas.setVisible(true);
-
-        }else{
-            tblVentas.setVisible(true);
+        } else {
+            // Mostrar tabla con los datos
             tblVentas.setItems(ventas2);
+            tblVentas.setVisible(true);
         }
 
         stage.show();
     }
 
-
+    /**
+     * Muestra un diálogo informativo con el mensaje proporcionado.
+     * Se asegura de ejecutarse en el hilo JavaFX.
+     *
+     * @param mensaje texto que se mostrará en el diálogo.
+     */
     public void muestraDialogoConMensaje(String mensaje) {
         if (!Platform.isFxApplicationThread()) {
             Platform.runLater(() -> this.muestraDialogoConMensaje(mensaje));
             return;
         }
 
-        Alert alert = new Alert(AlertType.INFORMATION);
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Información");
         alert.setHeaderText(null);
         alert.setContentText(mensaje);
         alert.showAndWait();
     }
 
+    /**
+     * Controla la visibilidad de la ventana.
+     * Inicializa la interfaz si es necesario.
+     *
+     * @param visible true para mostrar la ventana, false para ocultarla.
+     */
     public void setVisible(boolean visible) {
         if (!Platform.isFxApplicationThread()) {
             Platform.runLater(() -> this.setVisible(visible));
@@ -163,10 +195,17 @@ public class VentanaReporteGenerado {
         }
     }
 
+    /**
+     * Manejador para el botón de descargar reporte.
+     */
     @FXML
     private void handleDescargar() {
         control.descargarReporte(ventas2);
     }
+
+    /**
+     * Manejador para el botón de regresar a la ventana anterior.
+     */
     @FXML
     private void handleRegresar() {
         control.regresar();

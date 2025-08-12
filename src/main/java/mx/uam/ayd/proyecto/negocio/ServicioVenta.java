@@ -27,30 +27,54 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import java.io.File;
 
+/**
+ * Servicio para gestionar operaciones relacionadas con ventas,
+ * incluyendo creación, almacenamiento, actualización de stock,
+ * generación de reportes y exportación a PDF.
+ */
 @Service
 public class ServicioVenta {
+
     private static final Logger log = LoggerFactory.getLogger(ServicioVenta.class);
 
     private final VentaRepository ventaRepository;
     private final DetalleVentaRepository detalleVentaRepository;
     private final ProductoRepository productoRepository;
 
-
+    /**
+     * Constructor con inyección de dependencias.
+     *
+     * @param ventaRepository repositorio para operaciones de ventas
+     * @param detalleVentaRepository repositorio para detalles de venta
+     * @param productoRepository repositorio para productos
+     */
     @Autowired
-    public ServicioVenta(VentaRepository ventaRepository, DetalleVentaRepository detalleVentaRepository, ProductoRepository productoRepository) {
+    public ServicioVenta(VentaRepository ventaRepository,
+                         DetalleVentaRepository detalleVentaRepository,
+                         ProductoRepository productoRepository) {
         this.ventaRepository = ventaRepository;
         this.detalleVentaRepository = detalleVentaRepository;
         this.productoRepository = productoRepository;
     }
 
+    /**
+     * Crea una nueva instancia de venta.
+     *
+     * @return venta nueva instancia de {@link Venta}
+     */
     public Venta crearVenta() {
         log.info("Creando venta");
-
-        Venta venta = new Venta();
-
-        return venta;
+        return new Venta();
     }
 
+    /**
+     * Actualiza el stock de un producto restando la cantidad vendida.
+     *
+     * @param producto producto a actualizar
+     * @param cantidadVendida cantidad vendida que se debe descontar
+     * @throws IllegalArgumentException si el producto es nulo o cantidad es inválida
+     * @throws IllegalStateException si la cantidad vendida es mayor al stock disponible
+     */
     public void actualizarStock(Producto producto, int cantidadVendida){
         if(producto == null){
             throw new IllegalArgumentException("Producto no puede ser nulo");
@@ -66,6 +90,13 @@ public class ServicioVenta {
         productoRepository.save(producto);
     }
 
+    /**
+     * Guarda una venta estableciendo su monto total y fecha actual.
+     *
+     * @param venta la venta a guardar
+     * @param montoTotal monto total calculado para la venta
+     * @throws IllegalArgumentException si la venta es nula o el monto es inválido
+     */
     public void guardarVenta(Venta venta, double montoTotal){
         if(venta == null){
             throw new IllegalArgumentException("La venta no puede ser nulo");
@@ -78,6 +109,12 @@ public class ServicioVenta {
         ventaRepository.save(venta);
     }
 
+    /**
+     * Guarda una lista de detalles de venta asegurándose que no existan productos duplicados.
+     *
+     * @param detallesVenta lista con los detalles de la venta
+     * @throws IllegalStateException si la lista está vacía o contiene productos duplicados
+     */
     public void agregarDetallesVenta(List<DetalleVenta> detallesVenta) {
         if(detallesVenta.isEmpty()){
             throw new IllegalStateException("La lista no puede estar vacia");
@@ -91,13 +128,18 @@ public class ServicioVenta {
         detalleVentaRepository.saveAll(detallesVenta);
     }
 
+    /**
+     * Genera un documento PDF con la información de la venta y sus detalles,
+     * y permite al usuario seleccionar dónde guardarlo.
+     *
+     * @param detallesVenta lista de detalles de la venta
+     * @param venta venta correspondiente a los detalles
+     */
     public void crearDocumento(List<DetalleVenta> detallesVenta, Venta venta){
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Guardar PDF");
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Archivos PDF", "*.pdf"));
         fileChooser.setInitialFileName("venta_" + venta.getIdVenta() + ".pdf");
-
-
 
         // Establecer carpeta Descargas como inicial
         String userHome = System.getProperty("user.home");
@@ -123,7 +165,7 @@ public class ServicioVenta {
                 Table table = new Table(columnWidths);
 
                 // Encabezados
-                table.addCell("idProductp");
+                table.addCell("idProducto");
                 table.addCell("Nombre_producto");
                 table.addCell("Marca");
                 table.addCell("Precio");
@@ -147,6 +189,15 @@ public class ServicioVenta {
         }
     }
 
+    /**
+     * Recupera un listado de reportes de ventas agrupados por periodicidad y filtrados por fechas y tipo de producto.
+     *
+     * @param desde fecha de inicio del rango para el reporte
+     * @param hasta fecha final del rango para el reporte
+     * @param tipoProducto tipo de producto para filtrar
+     * @param periodicidad "Mensual" o cualquier otro valor para diario
+     * @return lista de objetos {@link ReporteVentaDTO} con la información del reporte
+     */
     public List<ReporteVentaDTO> recuperarVenta(LocalDate desde, LocalDate hasta, TipoProducto tipoProducto, String periodicidad) {
         if(periodicidad.equals("Mensual")){
             return ventaRepository.obtenerReporteVentasMensual(desde, hasta, tipoProducto);
@@ -156,12 +207,17 @@ public class ServicioVenta {
         }
     }
 
+    /**
+     * Permite descargar un reporte de ventas en formato PDF
+     * y permite al usuario seleccionar dónde guardarlo
+     *
+     * @param ventas lista con los datos del reporte a descargar
+     */
     public void descargarReporte(List<ReporteVentaDTO> ventas) {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Guardar PDF");
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Archivos PDF", "*.pdf"));
         fileChooser.setInitialFileName("Reporte_de_venta.pdf");
-
 
         // Establecer carpeta Descargas como inicial
         String userHome = System.getProperty("user.home");

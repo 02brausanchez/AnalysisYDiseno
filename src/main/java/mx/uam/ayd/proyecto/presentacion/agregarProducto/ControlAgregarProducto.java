@@ -5,8 +5,6 @@ import mx.uam.ayd.proyecto.negocio.modelo.UnidadProducto;
 import mx.uam.ayd.proyecto.negocio.modelo.MarcaProducto;
 
 import java.util.List;
-
-
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
@@ -17,11 +15,27 @@ import org.springframework.stereotype.Component;
 import mx.uam.ayd.proyecto.negocio.ServicioProducto;
 import mx.uam.ayd.proyecto.negocio.modelo.Producto;
 
+/**
+ * Controlador para la funcionalidad de agregar un nuevo producto al sistema.
+ *
+ * @author
+ */
 @Component
 public class ControlAgregarProducto {
+
+    /** Servicio encargado de la lógica de negocio relacionada con los productos. */
     private final ServicioProducto servicioProducto;
+
+    /** Ventana para la interfaz gráfica de agregar producto. */
     private final VentanaAgregarProducto ventana;
 
+    /**
+     * Constructor con inyección de dependencias.
+     * Spring se encarga de proporcionar las instancias necesarias.
+     *
+     * @param servicioProducto Servicio de negocio para manejar productos.
+     * @param ventana Vista de la ventana de agregar producto.
+     */
     @Autowired
     public ControlAgregarProducto(
             ServicioProducto servicioProducto,
@@ -30,28 +44,56 @@ public class ControlAgregarProducto {
         this.ventana = ventana;
     }
 
+    /**
+     * Inicializa la relación entre este controlador y la vista.
+     * Se ejecuta automáticamente después de que Spring ha inyectado las dependencias.
+     */
     @PostConstruct
     public void init() {
-        ventana.setControlAgregarProducto(this);}
+        ventana.setControlAgregarProducto(this);
+    }
 
+    /**
+     * Inicia el flujo de agregar producto mostrando VentanaAgregarProducto.
+     */
     public void inicia() {
         ventana.muestra();
     }
 
+    /**
+     * Agrega un nuevo producto al sistema usando el servicio de negocio.
+     * Si el producto se agrega exitosamente, se muestra un mensaje de confirmación.
+     * Si ocurre algún error, se muestra el mensaje de error.
+     *
+     * @param nombre Nombre del producto.
+     * @param tipoProducto Tipo de producto.
+     * @param marcaProducto Marca del producto.
+     * @param precio Precio del producto.
+     * @param cantidad Cantidad en inventario.
+     * @param unidadProducto Unidad de medida del producto.
+     * @param fechaCaducidad Fecha de caducidad del producto.
+     */
     public void agregarProducto(String nombre, TipoProducto tipoProducto, MarcaProducto marcaProducto,
                                 double precio, int cantidad, UnidadProducto unidadProducto, LocalDate fechaCaducidad) {
-        try{
+        try {
+            // Llama al servicio para registrar el producto en la base de datos
             servicioProducto.agregarProducto(nombre, tipoProducto, marcaProducto, precio, cantidad, unidadProducto, fechaCaducidad);
+
+            // Notifica al usuario que la operación fue exitosa
             ventana.muestraDialogoConMensaje("Producto agregado exitosamente.");
-        }catch(Exception ex){
-            ventana.muestraDialogoConMensaje("Error al agregar producto: "+ex.getMessage());
+        } catch (Exception ex) {
+            // Muestra el mensaje de error en caso de excepción
+            ventana.muestraDialogoConMensaje("Error al agregar producto: " + ex.getMessage());
         }
 
+        // Cierra la ventana después de intentar agregar el producto
         termina();
     }
 
+    /**
+     * Finaliza la operación de agregar producto y cierra la ventana.
+     */
     public void termina() {
         ventana.setVisible(false);
     }
 }
-

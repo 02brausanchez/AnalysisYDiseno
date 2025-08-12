@@ -79,7 +79,13 @@ public class VentanaPrincipal {
 	}
 	
 	// FXML Event Handlers
-	
+	@FXML
+	private void handleConfigurarUmbrales(){
+		if(control != null){
+			control.configurarUmbrales();
+		}
+	}
+
 	@FXML
 	private void handleAgregarUsuario() {
 		if (control != null) {

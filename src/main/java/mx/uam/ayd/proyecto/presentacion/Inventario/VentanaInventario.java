@@ -122,7 +122,8 @@ public class VentanaInventario {
     @FXML
     private TextField campoIdProducto;
 
-    // Método que se ejecuta al hacer clic en "Eliminar"
+    /* Método que se ejecuta al hacer clic en "Eliminar" y lo que hace es tomar el valor capturado en el cuadro de texto
+    para su eliminacion y en caso contrario mostrara un cuadro de dialogo con el error*/
     @FXML
     private void handleEliminar(ActionEvent event) {
         // Captura el texto ingresado en el campo
@@ -130,8 +131,8 @@ public class VentanaInventario {
         try {
             long id = Long.parseLong(textoId);
             // eliminar producto con ese ID de tipo long...
-            control.eliminaProducto(id);
-            campoIdProducto.clear();
+            control.eliminaProducto(id);//manda el id al controlador para su eliminacion
+            campoIdProducto.clear();//limpia el cuadro de texto despues de colocar un Id
         } catch (NumberFormatException e) {
             System.out.println("El ID ingresado no es un número válido.");
         }

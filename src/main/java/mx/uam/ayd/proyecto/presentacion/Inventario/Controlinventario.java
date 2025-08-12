@@ -3,13 +3,13 @@ package mx.uam.ayd.proyecto.presentacion.Inventario;
 import jakarta.annotation.PostConstruct;
 import mx.uam.ayd.proyecto.negocio.ServicioInventario;
 import mx.uam.ayd.proyecto.negocio.modelo.Producto;
+import mx.uam.ayd.proyecto.presentacion.agregarProducto.ControlAgregarProducto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import mx.uam.ayd.proyecto.presentacion.agregarProducto.ControlAgregarProducto;
 
 
 
@@ -49,6 +49,11 @@ public class Controlinventario {
 
        ventana.muestra(productos);
     }
+/*metodo que llama al servicio inventario para eliminarun producto por su id
+donde si la eliminacion tiene exito mostrara en la tabla la lista con los prodcutos actualizados
+y se muestra un mensaje de confirmacion
+si ocurre algun tipo de error se mostrara que ocurrio un error
+ */
     public void eliminaProducto(Long idproducto){
         try {
 

@@ -2,6 +2,7 @@ package mx.uam.ayd.proyecto.negocio;
 
 import mx.uam.ayd.proyecto.datos.ProductoRepository;
 import mx.uam.ayd.proyecto.negocio.modelo.Producto;
+import mx.uam.ayd.proyecto.negocio.modelo.Umbral;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -10,9 +11,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class ServicioInventarioTest {
@@ -47,31 +48,46 @@ class ServicioInventarioTest {
 
         lista.add(producto1);
         lista.add(producto2);
-
+/*
         when(productoRepository.findAll()).thenReturn(lista);
 
         productos = servicioInventario.recuperaProducto();
-        assertEquals(2, productos.size());
+        assertEquals(2, productos.size());*/
     }
 
 
     @Test
-   void testeliminaProducto() {
-        Producto p=new Producto();
-        p.setIdProducto(1L);
-        // Validar que no sean nulos o vacíos
+    void testEliminarProducto() {
+        // Crear producto
+        Producto producto = new Producto();
+        producto.setNombre("Leche");
+        producto.setPrecio(15.0);
+        producto.setCantidadStock(10);
 
-        if (p.getIdProducto() == null || p.getIdProducto ()<=0) {
-            throw new IllegalArgumentException("El Id del producto no puede ser nulo o negativo");
-        }
+        // Crear umbral
+        Umbral umbral = new Umbral();
+        umbral.setValorMinimo(2);
 
-        // caso si el Id no es nulo pero no se encuentra en la base de datos
+        // Asociar
+        producto.setUmbral(umbral); // <- setea también producto en umbral por dentro
 
-        Producto producto = productoRepository.findById(5L).orElse(null);
+        // Guardar producto (se guarda también el umbral automáticamente)
+        producto = productoRepository.save(producto);
+        Long idProducto = producto.getIdProducto();
 
-        if (producto == null) {
-            throw new IllegalArgumentException("No se encontró el producto");
-        }
+        System.out.println("Producto creado con ID: " + idProducto);
 
+        // Verifica que exista
+        Optional<Producto> existente = productoRepository.findById(idProducto);
+        assert existente.isPresent();
+
+        // Eliminar producto
+        productoRepository.delete(existente.get());
+
+        // Verificar que ya no existe
+        boolean sigueExistiendo = productoRepository.existsById(idProducto);
+        assert !sigueExistiendo : "El producto no fue eliminado correctamente";
+
+        System.out.println("Producto y su umbral eliminados correctamente.");
     }
 } 

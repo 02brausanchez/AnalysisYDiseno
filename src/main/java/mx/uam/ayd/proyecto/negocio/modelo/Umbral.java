@@ -31,7 +31,7 @@ public class Umbral {
      * Producto al que pertenece este umbral.
      */
     @OneToOne
-    @JoinColumn(name = "producto_id")
+    @JoinColumn(name = "producto_id", nullable = false, unique = true)
     private Producto producto;
 
     /**

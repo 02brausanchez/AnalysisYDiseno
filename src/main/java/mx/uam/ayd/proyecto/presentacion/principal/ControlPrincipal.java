@@ -1,21 +1,14 @@
 package mx.uam.ayd.proyecto.presentacion.principal;
 
 import jakarta.annotation.PostConstruct;
-
 import mx.uam.ayd.proyecto.presentacion.Inventario.Controlinventario;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import mx.uam.ayd.proyecto.presentacion.agregarUsuario.ControlAgregarUsuario;
-import mx.uam.ayd.proyecto.presentacion.listarUsuarios.ControlListarUsuarios;
-import mx.uam.ayd.proyecto.presentacion.listarGrupos.ControlListarGrupos;
-import mx.uam.ayd.proyecto.presentacion.configurarUmbrales.ControlConfiguracionUmbrales;
-
 import mx.uam.ayd.proyecto.presentacion.alertas.ControlAlerta;
 import mx.uam.ayd.proyecto.presentacion.alertas.VentanaAlerta;
-
+import mx.uam.ayd.proyecto.presentacion.configurarUmbrales.ControlConfiguracionUmbrales;
 import mx.uam.ayd.proyecto.presentacion.generarReporte.ControlGenerarReporte;
 import mx.uam.ayd.proyecto.presentacion.registroVentas.ControlRegistroVentas;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /**
  * Esta clase lleva el flujo de control de la ventana principal
@@ -107,4 +100,5 @@ public class ControlPrincipal {
 	public void mostrarAlertas() {
 		controlAlerta.inicia();
 	}
+
 }

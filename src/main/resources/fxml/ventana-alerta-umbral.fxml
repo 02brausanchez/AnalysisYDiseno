@@ -31,7 +31,7 @@
 
         <Line endX="650" strokeWidth="1" stroke="#DDD"/>
 
-        <!-- Mensaje personalizado con previsualización -->
+        <!-- Mensaje personalizado <con previsualización -->
         <VBox spacing="5">
             <Label text="Mensaje personalizado:" style="-fx-font-size: 14px;"/>
             <StackPane>

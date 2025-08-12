@@ -10,6 +10,8 @@ import mx.uam.ayd.proyecto.presentacion.agregarUsuario.ControlAgregarUsuario;
 import mx.uam.ayd.proyecto.presentacion.listarUsuarios.ControlListarUsuarios;
 import mx.uam.ayd.proyecto.presentacion.listarGrupos.ControlListarGrupos;
 import mx.uam.ayd.proyecto.presentacion.configurarUmbrales.ControlConfiguracionUmbrales;
+import mx.uam.ayd.proyecto.presentacion.alertas.ControlAlerta;
+import mx.uam.ayd.proyecto.presentacion.alertas.VentanaAlerta;
 
 /**
  * Esta clase lleva el flujo de control de la ventana principal
@@ -24,10 +26,10 @@ public class ControlPrincipal {
 	private final ControlListarUsuarios controlListarUsuarios;
 	private final ControlListarGrupos controlListarGrupos;
 	private final ControlConfiguracionUmbrales controlConfiguracionUmbrales;
+	private final ControlAlerta controlAlerta;
+	private final VentanaAlerta ventanaAlerta;
 	private final Controlinventario controlinventario;
-
 	private final VentanaPrincipal ventana;
-
 
 	@Autowired
 	public ControlPrincipal(
@@ -35,12 +37,17 @@ public class ControlPrincipal {
 			ControlListarUsuarios controlListarUsuarios,
 			ControlListarGrupos controlListarGrupos,
 			ControlConfiguracionUmbrales controlConfiguracionUmbrales,
+			ControlAlerta controlAlerta,
+			VentanaAlerta ventanaAlerta,
 			Controlinventario controlinventario,
 			VentanaPrincipal ventana) {
+
 		this.controlAgregarUsuario = controlAgregarUsuario;
 		this.controlListarUsuarios = controlListarUsuarios;
 		this.controlListarGrupos = controlListarGrupos;
 		this.controlConfiguracionUmbrales = controlConfiguracionUmbrales;
+		this.controlAlerta = controlAlerta;
+		this.ventanaAlerta = ventanaAlerta;
 		this.controlinventario = controlinventario;
 		this.ventana = ventana;
 	}
@@ -63,14 +70,16 @@ public class ControlPrincipal {
 	}
 
 	/*
-		Metodo que arranca la historia de usuario "configurar umbrales"
-	 */
-	public void configurarUmbrales() {controlConfiguracionUmbrales.inicia();}
+        Metodo que arranca la historia de usuario "configurar umbrales"
+     */
+	public void configurarUmbrales() {
+		controlConfiguracionUmbrales.inicia();
+	}
 
 	/*
 	 * Metodo que arranca la historia de usuario "Listar prodcutos "
 	 *
-	 * */
+	 */
 	public void Inventario() {
 		controlinventario.inicia();
 	}
@@ -97,5 +106,12 @@ public class ControlPrincipal {
 	 */
 	public void listarGrupos() {
 		controlListarGrupos.inicia();
+	}
+
+	/**
+	 * Método para mostrar ventana de alertas
+	 */
+	public void mostrarAlertas() {
+		controlAlerta.inicia();
 	}
 }

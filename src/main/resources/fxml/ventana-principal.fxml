@@ -22,4 +22,8 @@
 
     <Button text="Inventario" onAction="#handleInventario"
             style="-fx-min-width: 200px; -fx-min-height: 30px;"/>
+
+    <Button text="Alertas" onAction="#handleMostrarAlertas"
+            style="-fx-min-width: 200px; -fx-min-height: 30px;"/>
 </VBox>
+

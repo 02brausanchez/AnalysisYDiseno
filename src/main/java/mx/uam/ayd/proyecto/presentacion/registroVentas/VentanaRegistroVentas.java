@@ -86,7 +86,7 @@ public class VentanaRegistroVentas{
             // Load FXML
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ventana-registro-ventas.fxml"));
             loader.setController(this);
-            Scene scene = new Scene(loader.load(), 300, 220);
+            Scene scene = new Scene(loader.load(), 500, 420);
             stage.setScene(scene);
 
             txtCantidad.textProperty().addListener((obs, oldValue, newValue) -> {

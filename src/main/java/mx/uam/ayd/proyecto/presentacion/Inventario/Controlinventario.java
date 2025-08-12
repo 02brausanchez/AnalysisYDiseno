@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import mx.uam.ayd.proyecto.presentacion.agregarProducto.ControlAgregarProducto;
 
 
 
@@ -19,11 +20,13 @@ public class Controlinventario {
 
     private final ServicioInventario servicioInventario;
     private final VentanaInventario ventana;
+    private final ControlAgregarProducto controlAgregarProducto;
 
     @Autowired
-    public Controlinventario(ServicioInventario servicioInventario, VentanaInventario ventana) {
+    public Controlinventario(ServicioInventario servicioInventario, VentanaInventario ventana, ControlAgregarProducto controlAgregarProducto) {
         this.servicioInventario = servicioInventario;
         this.ventana = ventana;
+        this.controlAgregarProducto = controlAgregarProducto;
     }
     /**
      * Método que se ejecuta después de la construcción del bean
@@ -59,5 +62,6 @@ public class Controlinventario {
 
 
     public void agregarProducto() {
+        controlAgregarProducto.inicia();
     }
 }

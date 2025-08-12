@@ -10,8 +10,12 @@ import mx.uam.ayd.proyecto.presentacion.agregarUsuario.ControlAgregarUsuario;
 import mx.uam.ayd.proyecto.presentacion.listarUsuarios.ControlListarUsuarios;
 import mx.uam.ayd.proyecto.presentacion.listarGrupos.ControlListarGrupos;
 import mx.uam.ayd.proyecto.presentacion.configurarUmbrales.ControlConfiguracionUmbrales;
+
 import mx.uam.ayd.proyecto.presentacion.alertas.ControlAlerta;
 import mx.uam.ayd.proyecto.presentacion.alertas.VentanaAlerta;
+
+import mx.uam.ayd.proyecto.presentacion.generarReporte.ControlGenerarReporte;
+import mx.uam.ayd.proyecto.presentacion.registroVentas.ControlRegistroVentas;
 
 /**
  * Esta clase lleva el flujo de control de la ventana principal
@@ -22,33 +26,30 @@ import mx.uam.ayd.proyecto.presentacion.alertas.VentanaAlerta;
 @Component
 public class ControlPrincipal {
 
-	private final ControlAgregarUsuario controlAgregarUsuario;
-	private final ControlListarUsuarios controlListarUsuarios;
-	private final ControlListarGrupos controlListarGrupos;
 	private final ControlConfiguracionUmbrales controlConfiguracionUmbrales;
 	private final ControlAlerta controlAlerta;
 	private final VentanaAlerta ventanaAlerta;
 	private final Controlinventario controlinventario;
+	private final ControlGenerarReporte controlGenerarReporte;
+	private final ControlRegistroVentas controlRegistroVentas;
+
 	private final VentanaPrincipal ventana;
 
 	@Autowired
 	public ControlPrincipal(
-			ControlAgregarUsuario controlAgregarUsuario,
-			ControlListarUsuarios controlListarUsuarios,
-			ControlListarGrupos controlListarGrupos,
 			ControlConfiguracionUmbrales controlConfiguracionUmbrales,
 			ControlAlerta controlAlerta,
 			VentanaAlerta ventanaAlerta,
 			Controlinventario controlinventario,
+			ControlGenerarReporte controlGenerarReporte,
+			ControlRegistroVentas controlRegistroVentas,
 			VentanaPrincipal ventana) {
-
-		this.controlAgregarUsuario = controlAgregarUsuario;
-		this.controlListarUsuarios = controlListarUsuarios;
-		this.controlListarGrupos = controlListarGrupos;
 		this.controlConfiguracionUmbrales = controlConfiguracionUmbrales;
 		this.controlAlerta = controlAlerta;
 		this.ventanaAlerta = ventanaAlerta;
 		this.controlinventario = controlinventario;
+		this.controlGenerarReporte = controlGenerarReporte;
+		this.controlRegistroVentas = controlRegistroVentas;
 		this.ventana = ventana;
 	}
 
@@ -85,27 +86,19 @@ public class ControlPrincipal {
 	}
 
 	/**
-	 * Método que arranca la historia de usuario "agregar usuario"
-	 *
-	 */
-	public void agregarUsuario() {
-		controlAgregarUsuario.inicia();
-	}
-
-	/**
 	 * Método que arranca la historia de usuario "listar usuarios"
 	 *
 	 */
-	public void listarUsuarios() {
-		controlListarUsuarios.inicia();
+	public void registrarVenta() {
+		controlRegistroVentas.inicia();
 	}
 
 	/**
 	 * Método que arranca la historia de usuario "listar grupos"
 	 *
 	 */
-	public void listarGrupos() {
-		controlListarGrupos.inicia();
+	public void generarReporte() {
+		controlGenerarReporte.inicia();
 	}
 
 	/**

@@ -6,7 +6,8 @@ import mx.uam.ayd.proyecto.negocio.modelo.MarcaProducto;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-
+import javafx.scene.control.TextFormatter;
+import java.util.function.UnaryOperator;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -38,6 +39,7 @@ import mx.uam.ayd.proyecto.negocio.modelo.Producto;
 public class VentanaAgregarProducto{
     private Stage stage;
     private ControlAgregarProducto control;
+
 
     @FXML
     private TextField txtNombre;
@@ -103,7 +105,23 @@ public class VentanaAgregarProducto{
             Scene scene = new Scene(loader.load(), 700, 500);
             System.out.println("FXML cargado correctamente"); //
             stage.setScene(scene);
+            txtCantidad.textProperty().addListener((obs, oldValue, newValue) -> {
+                if (!newValue.matches("\\d*")) {
+                    txtCantidad.setText(newValue.replaceAll("[^\\d]", ""));
+                }
+            });
 
+            UnaryOperator<TextFormatter.Change> filter = change -> {
+                String newText = change.getControlNewText();
+                // Permite vacío o números con un solo punto decimal
+                if (newText.matches("\\d*\\.?\\d*")) {
+                    return change;
+                }
+                return null;
+            };
+
+            TextFormatter<String> textFormatter = new TextFormatter<>(filter);
+            txtPrecio.setTextFormatter(textFormatter);
             initialized = true;
         } catch (IOException e) {
             e.printStackTrace();

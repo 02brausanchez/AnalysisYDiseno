@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 
+import mx.uam.ayd.proyecto.negocio.modelo.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.slf4j.Logger;
@@ -14,9 +15,8 @@ import org.slf4j.LoggerFactory;
 import mx.uam.ayd.proyecto.datos.VentaRepository;
 import mx.uam.ayd.proyecto.datos.DetalleVentaRepository;
 import mx.uam.ayd.proyecto.datos.ProductoRepository;
-import mx.uam.ayd.proyecto.negocio.modelo.Venta;
-import mx.uam.ayd.proyecto.negocio.modelo.DetalleVenta;
-import mx.uam.ayd.proyecto.negocio.modelo.Producto;
+import mx.uam.ayd.proyecto.negocio.modelo.ReporteVentaDTO;
+
 
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -140,6 +140,67 @@ public class ServicioVenta {
                 }
                 document.add(table);
                 document.add(new Paragraph("Total: " + venta.getMontoTotal()).setFontSize(14));
+                document.close();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
+
+    public List<ReporteVentaDTO> recuperarVenta(LocalDate desde, LocalDate hasta, TipoProducto tipoProducto, String periodicidad) {
+        if(periodicidad.equals("Mensual")){
+            return ventaRepository.obtenerReporteVentasMensual(desde, hasta, tipoProducto);
+        }
+        else{
+            return ventaRepository.obtenerReporteVentasDiario(desde, hasta, tipoProducto);
+        }
+    }
+
+    public void descargarReporte(List<ReporteVentaDTO> ventas) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Guardar PDF");
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Archivos PDF", "*.pdf"));
+        fileChooser.setInitialFileName("Reporte_de_venta.pdf");
+
+
+        // Establecer carpeta Descargas como inicial
+        String userHome = System.getProperty("user.home");
+        File carpetaDescargas = new File(userHome, "Downloads");
+        if (carpetaDescargas.exists()) {
+            fileChooser.setInitialDirectory(carpetaDescargas);
+        }
+        File archivo = fileChooser.showSaveDialog(new Stage());
+        if (archivo != null) {
+            String ruta = archivo.getAbsolutePath();
+            if (!ruta.endsWith(".pdf")) {
+                ruta += ".pdf";
+            }
+            try {
+                PdfWriter writer = new PdfWriter(ruta);
+                PdfDocument pdf = new PdfDocument(writer);
+                Document document = new Document(pdf);
+
+                // Título
+                document.add(new Paragraph("Reporte de venta").setBold().setFontSize(16));
+
+                float[] columnWidths = {100f, 100f, 100f, 100f, 100f};
+                Table table = new Table(columnWidths);
+
+                // Encabezados
+                table.addCell("Fecha");
+                table.addCell("Nombre_producto");
+                table.addCell("Tipo");
+                table.addCell("Vendidos");
+                table.addCell("Total");
+
+                for (ReporteVentaDTO venta : ventas) {
+                    table.addCell(String.valueOf(venta.getFecha()));
+                    table.addCell(venta.getNombreProducto());
+                    table.addCell(String.valueOf(venta.getTipoProducto()));
+                    table.addCell(String.valueOf(venta.getCantidadVendida()));
+                    table.addCell(String.valueOf(venta.getTotalVenta()));
+                }
+                document.add(table);
                 document.close();
             } catch (Exception ex) {
                 ex.printStackTrace();

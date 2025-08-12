@@ -85,25 +85,18 @@ public class VentanaPrincipal {
 			control.configurarUmbrales();
 		}
 	}
-
+	
 	@FXML
-	private void handleAgregarUsuario() {
+	private void handleRegistrarVenta() {
 		if (control != null) {
-			control.agregarUsuario();
+			control.registrarVenta();
 		}
 	}
 	
 	@FXML
-	private void handleListarUsuarios() {
+	private void handleGenerarReporte() {
 		if (control != null) {
-			control.listarUsuarios();
-		}
-	}
-	
-	@FXML
-	private void handleListarGrupos() {
-		if (control != null) {
-			control.listarGrupos();
+			control.generarReporte();
 		}
 	}
 

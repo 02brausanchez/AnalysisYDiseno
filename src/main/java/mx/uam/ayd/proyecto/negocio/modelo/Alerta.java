@@ -1,4 +1,5 @@
 package mx.uam.ayd.proyecto.negocio.modelo;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -7,6 +8,7 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.JoinColumn;
 
 import java.time.LocalDateTime;
+
 /*
     Representa la alerta generada cuando un producto esta por debajo del umbral
  */
@@ -20,7 +22,7 @@ public class Alerta {
     private LocalDateTime fechaHoraEnvio;
 
     @OneToOne
-    @JoinColumn(name ="idUmbral")
+    @JoinColumn(name = "id_umbral")  // Aquí se define la columna foránea que referencia a Umbral
     private Umbral umbral;
 
     // ----- Getters y Setters -----
@@ -88,4 +90,3 @@ public class Alerta {
                 ", enviadaPorCorreo=" + enviadoPorCorreo + ", fechaHoraEnvio=" + fechaHoraEnvio + "]";
     }
 }
-

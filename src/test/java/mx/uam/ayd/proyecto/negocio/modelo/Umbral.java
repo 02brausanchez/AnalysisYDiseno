@@ -9,12 +9,7 @@ import jakarta.persistence.*;
  *
  */
 @Entity
-public class Umbral{
-
-    //@OneToOne(cascade = CascadeType.ALL)
-    //@JoinColumn(name = "producto_id")
-    //private Producto producto;
-
+public class Umbral {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,13 +17,13 @@ public class Umbral{
 
     private int valorMinimo;
 
+    @OneToOne(mappedBy = "umbral") // Aquí indicamos que Alerta es el dueño de la relación
+    private Alerta alerta;
+
     @OneToOne
     @JoinColumn(name = "producto_id")
     private Producto producto;
 
-    @OneToOne
-    @JoinColumn(name = "alerta_id")
-    private Alerta alerta;
     // Getters y setters
     public long getIdUmbral() {
         return idUmbral;

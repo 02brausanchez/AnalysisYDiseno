@@ -16,7 +16,6 @@ import javafx.scene.input.DataFormat;
 import javafx.stage.Stage;
 import mx.uam.ayd.proyecto.negocio.modelo.Producto;
 import mx.uam.ayd.proyecto.presentacion.agregarProducto.ControlAgregarProducto;
-import mx.uam.ayd.proyecto.presentacion.principal.ControlPrincipal;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -138,12 +137,12 @@ public class VentanaInventario {
         }
     }
 
-    @FXML
+  /*  @FXML
     private void handleAgregar() {
         if (control != null) {
             control.agregarProducto();
         }
-    }
+    }*/
 
     // FXML Event Handlers
 

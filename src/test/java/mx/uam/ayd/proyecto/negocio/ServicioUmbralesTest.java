@@ -42,7 +42,7 @@ class ServicioUmbralesTest {
      * @test Verifica que se recuperen productos con stock mayor a cero.
      */
     @Test
-    void testRecuperaConStockNoCero() {
+    public void testRecuperaConStockNoCero() {
         Producto p1 = new Producto();
         p1.setNombre("Producto A");
         Producto p2 = new Producto();
@@ -60,7 +60,7 @@ class ServicioUmbralesTest {
      * @test Verifica que se obtenga un umbral a partir del ID del producto.
      */
     @Test
-    void testFindById() {
+    public void testFindById() {
         Umbral umbral = new Umbral();
         when(umbralRepository.findByProductoIdProducto(1L)).thenReturn(umbral);
 
@@ -73,7 +73,7 @@ class ServicioUmbralesTest {
      * @test Verifica el guardado exitoso de un umbral cuando el producto existe.
      */
     @Test
-    void testGuardaCambios_Exitoso() {
+    public void testGuardaCambios_Exitoso() {
         Producto producto = new Producto();
         producto.setIdProducto(1L);
 
@@ -92,7 +92,7 @@ class ServicioUmbralesTest {
      * @test Verifica que se lance excepción si el producto no existe al guardar cambios.
      */
     @Test
-    void testGuardaCambios_ProductoNoExiste() {
+    public void testGuardaCambios_ProductoNoExiste() {
         Producto producto = new Producto();
         producto.setIdProducto(1L);
 
@@ -110,7 +110,7 @@ class ServicioUmbralesTest {
      * @test Verifica que se lance excepción si se intenta guardar cambios con null.
      */
     @Test
-    void testGuardaCambios_Nulo() {
+    public void testGuardaCambios_Nulo() {
         assertThrows(IllegalArgumentException.class, () -> {
             servicioUmbrales.guardaCambios(null);
         });
@@ -120,7 +120,7 @@ class ServicioUmbralesTest {
      * @test Verifica el guardado exitoso de un umbral nuevo cuando el producto no tiene umbral previo.
      */
     @Test
-    void testSave_Exitoso() {
+    public void testSave_Exitoso() {
         Producto producto = new Producto();
         producto.setIdProducto(1L);
 
@@ -139,7 +139,7 @@ class ServicioUmbralesTest {
      * @test Verifica que no se pueda guardar un nuevo umbral si el producto ya tiene uno asignado.
      */
     @Test
-    void testSave_ProductoYaTieneUmbral() {
+    public void testSave_ProductoYaTieneUmbral() {
         Producto producto = new Producto();
         producto.setIdProducto(1L);
 
@@ -160,7 +160,7 @@ class ServicioUmbralesTest {
      * @test Verifica que se lance excepción si se intenta guardar un umbral null.
      */
     @Test
-    void testSave_Nulo() {
+    public void testSave_Nulo() {
         assertThrows(IllegalArgumentException.class, () -> {
             servicioUmbrales.save(null);
         });
@@ -170,7 +170,7 @@ class ServicioUmbralesTest {
      * @test Verifica que manejarEdicionUmbral cree un nuevo umbral si no existe.
      */
     @Test
-    void testManejarEdicionUmbral_CreaNuevo() {
+    public void testManejarEdicionUmbral_CreaNuevo() {
         Producto producto = new Producto();
         producto.setIdProducto(1L);
 
@@ -186,7 +186,7 @@ class ServicioUmbralesTest {
      * @test Verifica que manejarEdicionUmbral actualice un umbral existente.
      */
     @Test
-    void testManejarEdicionUmbral_ActualizaExistente() {
+    public void testManejarEdicionUmbral_ActualizaExistente() {
         Producto producto = new Producto();
         producto.setIdProducto(1L);
 
@@ -206,7 +206,7 @@ class ServicioUmbralesTest {
      * @test Verifica que se lance excepción si se intenta manejar un umbral de un producto inexistente.
      */
     @Test
-    void testManejarEdicionUmbral_ProductoNoExiste() {
+    public void testManejarEdicionUmbral_ProductoNoExiste() {
         when(productoRepository.findById(99L)).thenReturn(Optional.empty());
 
         assertThrows(IllegalArgumentException.class, () -> {
@@ -218,7 +218,7 @@ class ServicioUmbralesTest {
      * @test Verifica la recuperación de un producto por su ID.
      */
     @Test
-    void testRecuperarProductoPorId() {
+    public void testRecuperarProductoPorId() {
         Producto producto = new Producto();
         producto.setIdProducto(5L);
 

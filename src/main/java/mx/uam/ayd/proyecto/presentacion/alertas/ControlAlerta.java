@@ -41,9 +41,15 @@ public class ControlAlerta {
         productoRepository.findAll().forEach(productos::add);
 
         for (Producto producto : productos) {
+            System.out.println("DEBUG - Producto: " + producto.getNombre());
+            System.out.println("DEBUG - Stock actual: " + producto.getCantidadStock());
+
             Umbral umbral = producto.getUmbral();
+            System.out.println("DEBUG - Umbral: " + (umbral != null ? umbral.getValorMinimo() : "SIN UMBRAL"));
+
             if (umbral != null) {
                 if (producto.getCantidadStock() < umbral.getValorMinimo()) {
+                    System.out.println("DEBUG - ALERTA GENERADA para " + producto.getNombre());
                     servicioAlerta.crearAlertaSiNecesaria(producto, umbral);
                     String mensaje = "El producto '" + producto.getNombre() + "' está por debajo del mínimo. Stock actual: "
                             + producto.getCantidadStock() + ", mínimo permitido: " + umbral.getValorMinimo();
@@ -51,6 +57,7 @@ public class ControlAlerta {
                 }
             }
         }
+
 
         if (mensajesAlertas.isEmpty()) {
             mensajesAlertas.add("No hay alertas. Todos los productos están con stock suficiente.");

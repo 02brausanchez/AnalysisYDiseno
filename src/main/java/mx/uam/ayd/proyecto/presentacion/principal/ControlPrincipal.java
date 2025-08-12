@@ -79,7 +79,7 @@ public class ControlPrincipal {
 	/*
 	 * Metodo que arranca la historia de usuario "Listar prodcutos "
 	 *
-	 */
+	 * */
 	public void Inventario() {
 		controlinventario.inicia();
 	}
